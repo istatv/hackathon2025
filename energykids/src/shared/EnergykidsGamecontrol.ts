@@ -1,44 +1,39 @@
-import { Player } from "./Player";
+import { Player } from './Player'
 
 export class EnergykidsGamecontrol {
-
-    private static instance: EnergykidsGamecontrol | null = null;
+    private static instance: EnergykidsGamecontrol | null = null
 
     public static GameState = {
-        BEFORE_GAME: "BEFORE_GAME",
-        INGAME_LOBBY: "LOBBY",
-        INGAME_MINI: "GAME",
-        FINAL: "BAZ"
-    };
-    
-    public players: any[];
-    public foo: number = 123;
+        BEFORE_GAME: 'BEFORE_GAME',
+        INGAME_LOBBY: 'LOBBY',
+        INGAME_MINI: 'GAME',
+        FINAL: 'BAZ',
+    }
+
+    public players: any[]
+    public foo: number = 123
 
     constructor() {
-        this.players = [
-            new Player(),
-            new Player(),
-        ];
+        this.players = [new Player('Player One'), new Player('Player Two')]
     }
 
     getPlayerAt(idx: number) {
-        return this.players[idx];
+        return this.players[idx]
     }
 
-    getTotalScore() : number {
-        let totalScore = 0;
+    getTotalScore(): number {
+        let totalScore = 0
         for (const player of this.players) {
-            totalScore += player.getScore();
+            totalScore += player.getScore()
         }
-        return totalScore;
+        return totalScore
     }
 
     // Singleton access method
     public static getInstance(): EnergykidsGamecontrol {
         if (!EnergykidsGamecontrol.instance) {
-            EnergykidsGamecontrol.instance = new EnergykidsGamecontrol();
+            EnergykidsGamecontrol.instance = new EnergykidsGamecontrol()
         }
-        return EnergykidsGamecontrol.instance;
+        return EnergykidsGamecontrol.instance
     }
-
 }
