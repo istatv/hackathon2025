@@ -1,3 +1,6 @@
+import { Player } from "../../shared/Player"
+import Rectangle = Phaser.GameObjects.Rectangle
+import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
 import TimeStep = Phaser.Core.TimeStep
 
 export class PushButtonGame extends Phaser.Scene {
@@ -6,6 +9,9 @@ export class PushButtonGame extends Phaser.Scene {
     msg_text: Phaser.GameObjects.Text
     time_step_player1: Phaser.Core.TimeStep
     time_step_player2: Phaser.Core.TimeStep
+
+    playerOne = new Player()
+    playerTwo = new Player()
 
     private static AMOUNT_TO_INCREASE = 50
     private static MAX_WIDTH = 800
@@ -50,17 +56,16 @@ export class PushButtonGame extends Phaser.Scene {
             this.playerTwo.name + ', press ctrl as fast as you can!',
             {}
         )
-        this.countdownText = this.add
-            .text(
-                +this.game.config.width / 2 - 100,
-                +this.game.config.height / 2 - 50,
-                this.countdown.toString(),
-                {
-                    fontSize: '100px',
-                    align: 'center',
-                    fixedWidth: 200,
-                }
-            )
+        this.countdownText = this.add.text(
+            +this.game.config.width / 2 - 100,
+            +this.game.config.height / 2 - 50,
+            this.countdown.toString(),
+            {
+                fontSize: '100px',
+                align: 'center',
+                fixedWidth: 200,
+            }
+        )
 
         this.background = this.add.image(512, 384, 'background')
         this.background.setAlpha(0.5)
