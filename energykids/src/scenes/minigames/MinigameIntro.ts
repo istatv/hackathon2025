@@ -63,7 +63,7 @@ export class MinigameIntro extends Scene {
 
     renderPlayers() {
         const gameControl = EnergykidsGamecontrol.getInstance()
-        const playerAmount = gameControl.players.length
+        const playerAmount = gameControl.getPlayers().length
         const division = +this.game.config.width / (playerAmount + 1)
 
         for (let i = 0; i < playerAmount; i++) {
@@ -72,7 +72,27 @@ export class MinigameIntro extends Scene {
                 +this.game.config.height - 180
             )
             const diameter = 100
-            const button = i === 0 ? 'R' : 'Space'
+            const button = i === 0 ? 'R' : 'SPACE'
+
+            const shape = this.add.ellipse(
+                position.x,
+                position.y,
+                diameter,
+                diameter,
+                Util.getColorFromString(gameControl.getPlayerAt(i).name)
+            )
+
+            const subtitle = this.add.text(
+                position.x - diameter - 50,
+                position.y + 60,
+                'Press ' + button + " when you're ready",
+                {
+                    align: 'center',
+                    fixedWidth: 300,
+                    color: 'darkblue',
+                }
+            )
+
             const title = this.add.text(
                 position.x - diameter / 2,
                 position.y - diameter / 2,
@@ -89,22 +109,6 @@ export class MinigameIntro extends Scene {
                     fontStyle: 'bold',
                 }
             )
-            const subtitle = this.add.text(
-                position.x,
-                position.y + 50,
-                'Press ' + button + " when you're ready",
-                {
-                    align: 'center',
-                    fixedWidth: 200,
-                }
-            )
-            const shape = this.add.ellipse(
-                position.x,
-                position.y,
-                diameter,
-                diameter,
-                Util.getColorFromString(gameControl.players[i].name)
-            )
 
             const player: Player = {
                 button,
@@ -119,9 +123,20 @@ export class MinigameIntro extends Scene {
         }
     }
 
+    waitUntilReady() {
+        const gameControl = EnergykidsGamecontrol.getInstance()
+        const playerAmount = gameControl.getPlayers().length
+        for (let i = 0; i < playerAmount; i++) {
+            this.input.keyboard?.on('keydown-' + this.players[i].button, () => {
+                this.players[i].subtitle.setText('Ready!')
+            })
+        }
+    }
+
     create() {
         this.config = this.registry.get('sceneConfig')
         this.setupScene()
         this.renderPlayers()
+        this.waitUntilReady()
     }
 }
