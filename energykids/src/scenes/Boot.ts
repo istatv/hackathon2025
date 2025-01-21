@@ -13,6 +13,13 @@ export class Boot extends Scene {
     }
 
     create() {
-        this.scene.start('PushButtonGame')
+        // Add data to the registry
+        this.registry.set('sceneConfig', {
+            title: 'Push Button Game',
+            description:
+                'Our car has no energy anymore! You need to ride the bicycle as fast as you can to recharge it!',
+        })
+
+        this.scene.start('MinigameIntro')
     }
 }

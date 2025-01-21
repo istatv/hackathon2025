@@ -1,6 +1,3 @@
-import { Player } from '../../entities/Player.ts'
-import Rectangle = Phaser.GameObjects.Rectangle
-import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
 import TimeStep = Phaser.Core.TimeStep
 
 export class PushButtonGame extends Phaser.Scene {
@@ -9,9 +6,6 @@ export class PushButtonGame extends Phaser.Scene {
     msg_text: Phaser.GameObjects.Text
     time_step_player1: Phaser.Core.TimeStep
     time_step_player2: Phaser.Core.TimeStep
-
-    playerOne = new Player()
-    playerTwo = new Player()
 
     private static AMOUNT_TO_INCREASE = 50
     private static MAX_WIDTH = 800
