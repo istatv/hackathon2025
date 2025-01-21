@@ -1,9 +1,6 @@
-import { Scene } from "phaser";
 import { Player } from "./Player";
-
 export class EnergykidsGamecontrol {
-
-    private static instance: EnergykidsGamecontrol | null = null;
+    private static instance: EnergykidsGamecontrol | null = null
 
     public static GameState = {
         BEFORE_GAME: "BEFORE_GAME",
@@ -28,43 +25,43 @@ export class EnergykidsGamecontrol {
 
     private init() {
         this.players = [
-            new Player(),
-            new Player(),
+            new Player('Player One'),
+            new Player('Player Two')
         ];
         this.setTotalScoreGoal(0);
     }
 
     reset() {
-        this.init();
+        this.init()
     }
 
     getPlayerAt(idx: number) : Player {
         return this.players[idx];
     }
 
-    getTotalScoreGoal() : number {
-        return this.totalScoreGoal;
+    getTotalScoreGoal(): number {
+        return this.totalScoreGoal
     }
 
-    getTotalScore() : number {
-        let totalScore = 0;
+    getTotalScore(): number {
+        let totalScore = 0
         for (const player of this.players) {
-            totalScore += player.getScore();
+            totalScore += player.getScore()
         }
-        return totalScore;
+        return totalScore
     }
 
-    getCurrentGameProgress() : number {
-        const total = this.players.reduce((p,c) => p + c.score, 0);
-        return total / this.getTotalScoreGoal();
+    getCurrentGameProgress(): number {
+        const total = this.players.reduce((p, c) => p + c.score, 0)
+        return total / this.getTotalScoreGoal()
     }
 
     setTotalScoreGoal(scoreGoal: number) {
-        this.totalScoreGoal = scoreGoal;
+        this.totalScoreGoal = scoreGoal
     }
 
     getPlayers(): Player[] {
-        return this.players;
+        return this.players
     }
 
     registerMinigame(identifier : string, scene: any) {
@@ -93,9 +90,8 @@ export class EnergykidsGamecontrol {
     // Singleton access method
     public static getInstance(): EnergykidsGamecontrol {
         if (!EnergykidsGamecontrol.instance) {
-            EnergykidsGamecontrol.instance = new EnergykidsGamecontrol();
+            EnergykidsGamecontrol.instance = new EnergykidsGamecontrol()
         }
-        return EnergykidsGamecontrol.instance;
+        return EnergykidsGamecontrol.instance
     }
-
 }
