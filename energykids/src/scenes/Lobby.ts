@@ -17,12 +17,12 @@ export class Lobby extends Scene {
         this.players = this.controller.getPlayers()
         this.add.text(50,50,"Save the city - \nBe the hero")
 
-        this.add
+        const start_game = this.add
             .rectangle(150, 125, 200, 50, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
                 const randomNumber = Phaser.Math.Between(1, 5)
-                this.showSelectedGame(randomNumber)
+                this.launchMiniGame(randomNumber)
             })
 
         this.add
@@ -32,7 +32,7 @@ export class Lobby extends Scene {
             })
             .setOrigin(0.5)
 
-        this.add
+        const exit = this.add
             .rectangle(950, 50, 100, 50, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
@@ -49,41 +49,30 @@ export class Lobby extends Scene {
         this.add
             .rectangle(100, 700, 100, 50, 0x0000ff)
 
-        this.add
+        const status = this.add
             .text(100, 700, 'Status', {
                 fontSize: '24px',
                 color: '#ffffff',
             })
             .setOrigin(0.5)
 
-        this.add
+        const player2 = this.add
             .rectangle(950, 700, 100, 100, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
                 this.updatePlayerName(player2name, this.players[1])
             })
 
-        this.add
+        const player1 = this.add
             .rectangle(830, 700, 100, 100, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
                 this.updatePlayerName(player1name, this.players[0])
             })
 
-        this.add
-            .circle(400, 650, 50, 0xff0000)
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.updatePlayerName(player1name, this.players[0])
-            })
-        this.add
-            .circle(600, 650, 50, 0x00ff00)
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.updatePlayerName(player2name, this.players[1])
-            })
+
         const player1name = this.add.text(350, 725, this.players[0].name, {})
-        const player2name = this.add.text(550, 725, this.players[0].name, {})
+        const player2name = this.add.text(550, 725, this.players[1].name, {})
         const player1Score = this.add.text(350, 750, '0', {})
         const player2Score = this.add.text(550, 750, '0', {})
     }
@@ -140,19 +129,10 @@ export class Lobby extends Scene {
             })
     }
 
-    showSelectedGame(gameNumber: number) {
-        // Add a container for the popup
-        const popup = this.add.rectangle(512, 400, 300, 300, 0xffffff)
-        popup.setStrokeStyle(2, 0x0000ff)
-
-        const text = this.add
-            .text(512, 300, 'Game ' + gameNumber, {
-                fontSize: '24px',
-                color: '#000',
-            })
-            .setOrigin(0.5);
-
-        popup.destroy()
-        text.destroy()
+    launchMiniGame(gamenumber: number) {
+        this.scene.start('PushButtonGame')
+        // if (gamenumber == 1){
+        //     this.scene.start('PushButtonGame')
+        // }
     }
 }
