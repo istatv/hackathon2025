@@ -1,5 +1,6 @@
 import { EnergykidsGamecontrol } from '../src/shared/EnergykidsGamecontrol';
 import { Player } from '../src/shared/Player';
+// import { PushButtonGame } from '../src/scenes/minigames/PushButtonGame.ts';
 
 describe('Testing Energykids Gamecontrol', () => {
   
@@ -59,5 +60,46 @@ describe('Testing Energykids Gamecontrol', () => {
         // expect(game.getPlayerAt(20)).toBeUndefined();
         // expect(game.players).toBeDefined();
     });
+
+    test('can get all lobby events', () => {
+        const game = new EnergykidsGamecontrol();
+        expect(game.getLobbyEvents).toBeDefined()
+        expect(game.getLobbyEvents()).toBeInstanceOf(Object)
+    });
+
+    test('can add a minigame to the lobby events', () => {
+        const game = new EnergykidsGamecontrol();
+        expect(game.getLobbyEvents).toBeDefined()
+        expect(typeof game.getLobbyEvents()).toBe('object');
+
+        game.registerMinigame("golf", {});
+        const minigames = game.getLobbyEvents();
+        const identifiers = Object.keys(minigames);
+        expect(identifiers.length).toBeGreaterThan(0);
+        const golfGame = minigames["golf"];
+        expect(golfGame.type).toBeDefined();
+        expect(golfGame.identifier).toBeDefined();
+        expect(golfGame.scene).toBeDefined();
+        expect(golfGame.isActive).toBeDefined();
+    });
+
+    test('can give a random lobby event', () => {
+        const game = new EnergykidsGamecontrol();
+        expect(game.randomLobbyEvent).toBeDefined()
+        // expect(game.getLobbyEvents).toBeDefined()
+        expect(typeof game.getLobbyEvents()).toBe('object');
+
+        game.registerMinigame("golf", {});
+        game.registerMinigame("cooking", {});
+        game.registerMinigame("soccer", {});
+        
+        const minigames = game.getLobbyEvents();
+        const identifiers = Object.keys(minigames);
+        expect(identifiers.length).toBe(3);
+        let re = game.randomLobbyEvent();
+        expect(re).toBeDefined();
+        expect(re.identifier).toBeDefined();
+    });
+
 
 });
