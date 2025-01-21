@@ -64,7 +64,7 @@ export class EnergykidsGamecontrol {
         return this.players
     }
 
-    registerMinigame(identifier : string, scene: any) {
+    registerMinigame(scene: any, identifier : string, clearname: string) {
         const event = {
             type: EnergykidsGamecontrol.LobbyEvent.MINIGAME,
             identifier,

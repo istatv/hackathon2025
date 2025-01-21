@@ -20,6 +20,8 @@ export class Boot extends Scene {
                 'Our car has no energy anymore! You need to ride the bicycle as fast as you can to recharge it!',
         })
 
-        this.scene.start('MinigameIntro')
+
+
+        this.scene.start('CatchGame')
     }
 }

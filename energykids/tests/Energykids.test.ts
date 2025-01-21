@@ -72,7 +72,8 @@ describe('Testing Energykids Gamecontrol', () => {
         expect(game.getLobbyEvents).toBeDefined()
         expect(typeof game.getLobbyEvents()).toBe('object');
 
-        game.registerMinigame("golf", {});
+        game.registerMinigame({}, "golf", "a nice golfgame");
+
         const minigames = game.getLobbyEvents();
         const identifiers = Object.keys(minigames);
         expect(identifiers.length).toBeGreaterThan(0);
@@ -89,13 +90,14 @@ describe('Testing Energykids Gamecontrol', () => {
         // expect(game.getLobbyEvents).toBeDefined()
         expect(typeof game.getLobbyEvents()).toBe('object');
 
-        game.registerMinigame("golf", {});
-        game.registerMinigame("cooking", {});
-        game.registerMinigame("soccer", {});
+        game.registerMinigame( {}, "golf", "weiter abschlag");
+        game.registerMinigame( {}, "raindrops", "catch the raindrops");
+        game.registerMinigame( {}, "cloud-pushing", "fast solar charing");
+        game.registerMinigame( {}, "soccer", "elf meter schiessen");
         
         const minigames = game.getLobbyEvents();
         const identifiers = Object.keys(minigames);
-        expect(identifiers.length).toBe(3);
+        expect(identifiers.length).toBe(4);
         let re = game.randomLobbyEvent();
         expect(re).toBeDefined();
         expect(re.identifier).toBeDefined();
