@@ -20,4 +20,14 @@ describe('Testing Player', () => {
         expect(player.score).toEqual(123);
     });
 
+    // test('can player ', () => {
+    //     const player = new Player();
+    //     expect(player).not.toBeUndefined();
+    //     expect(player.score).toEqual(0);
+    //     player.addScore(100);
+    //     expect(player.score).toEqual(100);
+    //     player.addScore(23);
+    //     expect(player.score).toEqual(123);
+    // });
+
 });

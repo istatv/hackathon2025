@@ -6,23 +6,36 @@ export class EnergykidsGamecontrol {
 
     public static GameState = {
         BEFORE_GAME: "BEFORE_GAME",
-        INGAME_LOBBY: "LOBBY",
-        INGAME_MINI: "GAME",
-        FINAL: "BAZ"
+        INGAME_LOBBY: "INGAME_LOBBY",
+        INGAME_MINI: "INGAME_MINI",
+        FINAL: "FINAL"
     };
     
-    public players: any[];
-    public foo: number = 123;
+    private players: Player[];
+    private totalScoreGoal: number = -1;
 
     constructor() {
+        this.init();
+    }
+
+    private init() {
         this.players = [
             new Player(),
             new Player(),
         ];
     }
 
-    getPlayerAt(idx: number) {
+    reset() {
+        this.init();
+    }
+
+
+    getPlayerAt(idx: number) : Player {
         return this.players[idx];
+    }
+
+    getTotalScoreGoal() : number {
+        return this.totalScoreGoal;
     }
 
     getTotalScore() : number {
@@ -31,6 +44,19 @@ export class EnergykidsGamecontrol {
             totalScore += player.getScore();
         }
         return totalScore;
+    }
+
+    getCurrentGameProgress() : number {
+        const total = this.players.reduce((p,c) => p + c.score, 0);
+        return total / this.getTotalScoreGoal();
+    }
+
+    setTotalScoreGoal(scoreGoal: number) {
+        this.totalScoreGoal = scoreGoal;
+    }
+
+    getPlayers(): Player[] {
+        return this.players;
     }
 
     // Singleton access method
