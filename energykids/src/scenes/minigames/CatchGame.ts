@@ -91,6 +91,14 @@ export class CatchGame extends Phaser.Scene {
         this.paddleOne = {
             tOff: Math.round(Math.random() * Date.now()),
             oY: oy,
+            currX: wha - 200,
+            nextX: wha - 200,
+            leftKey: this.input.keyboard.addKey(
+                Phaser.Input.Keyboard.KeyCodes.A
+            ),
+            rightKey: this.input.keyboard.addKey(
+                Phaser.Input.Keyboard.KeyCodes.D
+            ),
         }
         this.paddleOne.__proto__ = this.add.rectangle(
             wha - 200,
@@ -100,11 +108,20 @@ export class CatchGame extends Phaser.Scene {
             0x0000ff,
             0x555555
         )
+        
 
         oy = height - size * 0.75 + Math.random() * 5 - 5
         this.paddleTwo = {
             tOff: Math.round(Math.random() * Date.now()),
             oY: oy,
+            currX: wha + 200,
+            nextX: wha + 200,
+            leftKey: this.input.keyboard.addKey(
+                Phaser.Input.Keyboard.KeyCodes.J
+            ),
+            rightKey: this.input.keyboard.addKey(
+                Phaser.Input.Keyboard.KeyCodes.L
+            ),
         }
         this.paddleTwo.__proto__ = this.add.rectangle(
             wha + 200,
@@ -197,13 +214,63 @@ export class CatchGame extends Phaser.Scene {
         // this.overlayGroup[0].contains
     }
 
+    tween(currX:number, nextX:number, easingFactor = 0.1) {
+    if (easingFactor <= 0 || easingFactor >= 1) {
+        throw new Error("Easing factor must be between 0 and 1 (exclusive).");
+    }
+
+    // Calculate the difference and apply the easing
+    const delta = nextX - currX;
+    const step = delta * easingFactor;
+
+    // Update the current position
+    currX += step;
+
+    // Return the updated position
+    return currX;
+    }
+
     update() {
         this.tick = (this.tick + 1) % Number.MAX_VALUE
         this.computePaddlesFloat(this.paddleOne)
         this.computePaddlesFloat(this.paddleTwo)
-        // console.log("aaaa");
+        console.log(this)
+        if(this.paddleOne.leftKey.isDown) {
+            this.paddleOne.nextX -= 10
+        }
+        if (this.paddleOne.rightKey.isDown) {
+            // console.log("aaaa");
+            this.paddleOne.nextX += 10
+        }
+        if (this.paddleTwo.leftKey.isDown) {
+            this.paddleTwo.nextX -= 10
+        }
+        if (this.paddleTwo.rightKey.isDown) {
+            // console.log("aaaa");
+            this.paddleTwo.nextX += 10
+        }
+
+
+        this.paddleOne.currX = this.tween(this.paddleOne.currX, this.paddleOne.nextX, 0.1)
+
+        this.paddleTwo.currX = this.tween(
+            this.paddleTwo.currX,
+            this.paddleTwo.nextX,
+            0.1
+        )
+
+        this.paddleOne.__proto__.setX(this.paddleOne.currX)
+
+        this.paddleTwo.currX = this.tween(
+            this.paddleTwo.currX,
+            this.paddleTwo.nextX,
+            0.1
+        )
+
+        this.paddleTwo.__proto__.setX(this.paddleTwo.currX)
+
         if (this.gamestate == CatchGame.State.INGAME) {
-            console.log('!!!!', this)
+            //console.log('!!!!', this)
         }
     }
 
@@ -226,6 +293,19 @@ export class CatchGame extends Phaser.Scene {
 
     initBindings() {
         // close the modal start the game
+        // this.input.keyboard?.on('keydown-A', () => {
+        //     this.paddleOne.nextX -= 10;
+        // })
+        // this.input.keyboard?.on('keydown-D', () => {
+        //     this.paddleOne.nextX += 10
+        // })
+        // this.input.keyboard?.on('keydown-J', () => {
+        //     this.paddleTwo.nextX -= 10
+        // })
+        // this.input.keyboard?.on('keydown-L', () => {
+        //     this.paddleTwo.nextX += 10
+        // });
+
         this.input.keyboard?.on('keyup-SPACE', () => {
             if (this.gamestate == CatchGame.State.INTRO) {
                 for (const item of this.overlayGroup) {
