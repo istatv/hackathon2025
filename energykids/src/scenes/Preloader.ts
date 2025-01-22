@@ -29,6 +29,7 @@ export class Preloader extends Scene {
         this.load.svg([
             { key: 'kyo1', url: 'kyo2-06.svg' },
             { key: 'kyo2', url: 'kyo2-07.svg' },
+            { key: 'lobby_score', url: 'Players_Name_Scoreboard.svg' },
             {
                 key: 'city1',
                 url: 'city/City_State_0_bad.svg',
