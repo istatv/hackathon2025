@@ -1,12 +1,9 @@
 import { Scene } from 'phaser'
 import { EnergykidsGamecontrol } from '../shared/EnergykidsGamecontrol.ts'
-import { Util } from '../shared/Util.ts'
-import Rectangle = Phaser.GameObjects.Rectangle
 import Text = Phaser.GameObjects.Text
 import Point = Phaser.Geom.Point
 
 interface Player {
-    shape: Rectangle
     title: Text
     subtitle: Text
     position: Point
@@ -34,32 +31,36 @@ export class MinigameIntro extends Scene {
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)
 
-        this.background = this.add.image(512, 384, 'background')
-        this.background.setAlpha(0.5)
+        this.background = this.add.image(512, 384, 'background-minigame')
+        this.background.setDisplaySize(1024, 768)
 
         // Add Title
-        this.add.text(0, 48, this.config.title, {
+        this.add.text(0, 150, this.config.title, {
             align: 'center',
-            fontSize: 32,
             fixedWidth: 1024,
+            fontSize: '48px',
+            color: '#00F077',
+            fontFamily: 'MightySoul',
         })
 
         // Add Description
         this.add.text(
-            0,
-            +this.game.config.height / 2 - 250,
+            150,
+            +this.game.config.height / 2 - 150,
             this.config.tutorialText,
             {
-                align: 'justify',
-                fontSize: 25,
+                align: 'center',
                 padding: {
                     left: 80,
                     right: 80,
                 },
                 wordWrap: {
-                    width: 900,
+                    width: 600,
                     useAdvancedWrap: false,
                 },
+                fontSize: '32px',
+                color: '#ABCFFB',
+                fontFamily: 'MightySoul',
             }
         )
     }
@@ -77,45 +78,44 @@ export class MinigameIntro extends Scene {
             const diameter = 100
             const button = i === 0 ? 'R' : 'SPACE'
 
-            const shape = this.add.ellipse(
-                position.x,
-                position.y,
-                diameter,
-                diameter,
-                Util.getColorFromString(gameControl.getPlayerAt(i).name)
-            )
-
-            const subtitle = this.add.text(
+            const title = this.add.text(
                 position.x - diameter - 50,
-                position.y + 60,
-                'Press ' + button + " when you're ready",
+                position.y - 20,
+                gameControl.getPlayerAt(i).name,
                 {
                     align: 'center',
                     fixedWidth: 300,
-                    color: 'darkblue',
+                    fontSize: '32px',
+                    color: '#ABCFFB',
+                    fontFamily: 'MightySoul',
                 }
             )
 
-            const title = this.add.text(
-                position.x - diameter / 2,
-                position.y - diameter / 2,
-                'P' + (i + 1),
+            const subtitle = this.add.text(
+                position.x - 70,
+                position.y + 20,
+                'Press ' + button + " when you're ready",
                 {
                     align: 'center',
-                    padding: {
-                        top: diameter / 2 - 15,
+                    fontSize: '24px',
+                    color: '#ABCFFB',
+                    fontFamily: 'MightySoul',
+                    wordWrap: {
+                        width: 310,
+                        useAdvancedWrap: false,
                     },
-                    fixedWidth: diameter,
-                    fontSize: 35,
-                    fixedHeight: diameter,
-                    color: 'darkblue',
-                    fontStyle: 'bold',
                 }
+            )
+
+            const characterKey = `character${i+1}`
+            this.add.image(
+                position.x,
+                position.y - 100,
+                this.config[characterKey]
             )
 
             const player: Player = {
                 button,
-                shape,
                 position,
                 diameter,
                 title,
