@@ -18,10 +18,15 @@ export class Boot extends Scene {
             title: 'Push Button Game',
             description:
                 'Our car has no energy anymore! You need to ride the bicycle as fast as you can to recharge it!',
+            sceneToStart: 'PushButtonGame',
         })
 
+        this.registry.set('sceneConfig', {
+            title: 'Catch Game',
+            description: 'Lets catch something!',
+            sceneToStart: 'CatchGame',
+        })
 
-
-        this.scene.start('CatchGame')
+        this.scene.start('MinigameIntro')
     }
 }

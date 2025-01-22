@@ -12,6 +12,7 @@ interface Player {
     position: Point
     diameter: number
     button: string
+    ready: boolean
 }
 
 export class MinigameIntro extends Scene {
@@ -96,7 +97,7 @@ export class MinigameIntro extends Scene {
             const title = this.add.text(
                 position.x - diameter / 2,
                 position.y - diameter / 2,
-                'P' + i + 1,
+                'P' + (i + 1),
                 {
                     align: 'center',
                     padding: {
@@ -117,6 +118,7 @@ export class MinigameIntro extends Scene {
                 diameter,
                 title,
                 subtitle,
+                ready: false,
             }
 
             this.players.push(player)
@@ -129,6 +131,26 @@ export class MinigameIntro extends Scene {
         for (let i = 0; i < playerAmount; i++) {
             this.input.keyboard?.on('keydown-' + this.players[i].button, () => {
                 this.players[i].subtitle.setText('Ready!')
+                this.players[i].ready = true
+                if (this.players.reduce((p, c) => c.ready && p, true)) {
+                    this.time.delayedCall(500, () => {
+                        this.add.text(
+                            0,
+                            +this.game.config.height / 2,
+                            'Get Ready!',
+                            {
+                                align: 'center',
+                                fixedWidth: 1024,
+                                fontSize: 45,
+                                color: 'white',
+                                fontStyle: 'bold',
+                            }
+                        )
+                        this.time.delayedCall(3000, () => {
+                            this.scene.start(this.config.sceneToStart)
+                        })
+                    })
+                }
             })
         }
     }
