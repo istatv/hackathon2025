@@ -1,8 +1,8 @@
 import { Player } from '../../shared/entities/Player.ts'
+import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol'
 import Rectangle = Phaser.GameObjects.Rectangle
-import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
 import TimeStep = Phaser.Core.TimeStep
-import { EnergykidsGamecontrol } from "../../shared/EnergykidsGamecontrol"
+import Image = Phaser.GameObjects.Image
 
 export class PushButtonGame extends Phaser.Scene {
     public static readonly IDENTIFIER: string = 'PushButtonGame'
@@ -18,7 +18,7 @@ export class PushButtonGame extends Phaser.Scene {
 
     private static AMOUNT_TO_INCREASE = 150
     private static MAX_WIDTH = 800
-    private static REDUCTION_SPEED = 0.05
+    private static REDUCTION_SPEED = 0.25
 
     private gameIsOver = true
 
@@ -26,6 +26,8 @@ export class PushButtonGame extends Phaser.Scene {
     private countdown: number
     private countdownTimer: Phaser.Time.TimerEvent
 
+    private playerOneImage: Image
+    private playerTwoImage: Image
     private rectangle_player1: Phaser.GameObjects.Rectangle
     private rectangle_player2: Phaser.GameObjects.Rectangle
 
@@ -35,9 +37,11 @@ export class PushButtonGame extends Phaser.Scene {
         this.playerTwo = this.gamecontrol.getPlayerAt(1)
     }
 
-    create() {
-        this.camera = this.cameras.main
-        this.camera.setBackgroundColor(0xff0000)
+    renderBackground() {
+        this.add.image(0, 0, 'pb_background').setScale(0.5)
+    }
+
+    renderText() {
         this.countdown = 5
         this.countdownTimer = this.time.addEvent({
             delay: 1000,
@@ -60,6 +64,7 @@ export class PushButtonGame extends Phaser.Scene {
             this.playerTwo.name + ', press [ CTRL ] repeatedly to win!',
             {}
         )
+
         this.countdownText = this.add.text(
             +this.game.config.width / 2 - 100,
             +this.game.config.height / 2 - 50,
@@ -70,9 +75,11 @@ export class PushButtonGame extends Phaser.Scene {
                 fixedWidth: 200,
             }
         )
+    }
 
-        this.background = this.add.image(512, 384, 'background')
-        this.background.setAlpha(0.5)
+    renderPlayers() {
+        this.playerOneImage = this.add.image(350, 640, 'pb_kyo1_1')
+        this.playerTwoImage = this.add.image(690, 640, 'pb_kyo2_1')
 
         this.rectangle_player1 = this.add.rectangle(100, 100, 0, 50, 0xff7448)
         this.rectangle_player2 = this.add.rectangle(100, 200, 0, 50, 0xff7335)
@@ -105,6 +112,14 @@ export class PushButtonGame extends Phaser.Scene {
                 this.gameIsOver
             )
         })
+    }
+
+    create() {
+        this.camera = this.cameras.main
+
+        this.renderBackground()
+        this.renderText()
+        this.renderPlayers()
     }
 
     reduceBar(delta, rectangle: Rectangle) {
