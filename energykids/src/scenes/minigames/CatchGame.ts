@@ -1,7 +1,4 @@
 import { Player } from '../../shared/entities/Player.ts'
-import Rectangle = Phaser.GameObjects.Rectangle
-import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
-import TimeStep = Phaser.Core.TimeStep
 import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol'
 
 const MAIN_FONT = "MightySoul";
@@ -29,21 +26,21 @@ export class CatchGame extends Phaser.Scene {
     }
 
     private gamestate = CatchGame.State.INTRO
-    
+
     private overlayGroup: any[]
     private outroGroup: any[]
     private ballPool: any[]
     private ballTypes: any[]
     private tick: number = 0
 
-    private countdown = 0;
+    private countdown = 0
     private countdownTimer: Phaser.Time.TimerEvent
-    private countdownText: Phaser.GameObjects.Text;
+    private countdownText: Phaser.GameObjects.Text
 
-    private playerOneScore: number;
-    private playerOneText: Phaser.GameObjects.Text;
-    private playerTwoScore: number;
-    private playerTwoText: Phaser.GameObjects.Text;
+    private playerOneScore: number
+    private playerOneText: Phaser.GameObjects.Text
+    private playerTwoScore: number
+    private playerTwoText: Phaser.GameObjects.Text
 
     constructor() {
         super(CatchGame.IDENTIFIER)
@@ -54,7 +51,6 @@ export class CatchGame extends Phaser.Scene {
             { color: 0x00ff00, effect: 20 },
             { color: 0xff0000, effect: -10 },
         ]
-
     }
 
     create() {
@@ -87,28 +83,29 @@ export class CatchGame extends Phaser.Scene {
     initBallPool() {
         const totalBalls = TOTAL_BALLS;
         for (let idx = 0; idx < totalBalls; idx++) {
-            this.ballPool.push(this.createBall(idx));
+            this.ballPool.push(this.createBall(idx))
         }
     }
 
     createBall(idx: Number, withSprite: boolean = true) {
-        const { width, height } = this.game.config;
-        const rdx = Math.floor(Date.now() * Math.random()) %  this.ballTypes.length;
-        const bt = this.ballTypes[rdx];
+        const { width, height } = this.game.config
+        const rdx =
+            Math.floor(Date.now() * Math.random()) % this.ballTypes.length
+        const bt = this.ballTypes[rdx]
 
         let b = {
             id: idx,
             color: bt.color,
             effect: bt.effect,
             currX: Math.random() * width,
-            currY: (Math.random() * height) * -1,
+            currY: Math.random() * height * -1,
             nextY: 999999,
             velY: (Math.random() * 3 + 2) * 0.000001,
             r: 15,
         }
 
         if(withSprite) {
-            b = this.attachSpriteToBall(b); 
+            b = this.attachSpriteToBall(b);
         }
 
         return b;
@@ -136,17 +133,21 @@ export class CatchGame extends Phaser.Scene {
         }
 
         Object.keys(tmp).forEach((k) => {
-            ball[k] = tmp[k];
-        });
+            ball[k] = tmp[k]
+        })
 
 
-        return ball;
+        return ball
     }
 
     updateText() {
         this.countdownText.setText(this.getCurrentCountdownFormated())
-        this.playerOneText.setText(this.getFormatedScoreText(this.playerOne, this.playerOneScore))
-        this.playerTwoText.setText(this.getFormatedScoreText(this.playerTwo, this.playerTwoScore))
+        this.playerOneText.setText(
+            this.getFormatedScoreText(this.playerOne, this.playerOneScore)
+        )
+        this.playerTwoText.setText(
+            this.getFormatedScoreText(this.playerTwo, this.playerTwoScore)
+        )
     }
 
     addBalls() {
@@ -270,12 +271,12 @@ export class CatchGame extends Phaser.Scene {
     }
 
     getWinner() {
-        if(this.playerOneScore > this.playerTwoScore) {
-            return this.playerOne;
-        } else if(this.playerOneScore < this.playerTwoScore) {
-            return this.playerTwo;
+        if (this.playerOneScore > this.playerTwoScore) {
+            return this.playerOne
+        } else if (this.playerOneScore < this.playerTwoScore) {
+            return this.playerTwo
         } else {
-            return {name: "It's a draw!"}
+            return { name: "It's a draw!" }
         }
     }
 
@@ -308,7 +309,7 @@ export class CatchGame extends Phaser.Scene {
             this.add.text(
                 +this.game.config.width / 2 - 260,
                 +this.game.config.height / 2 - 100,
-                'WINNER?\n ' +  this.getWinner().name,
+                'WINNER?\n ' + this.getWinner().name,
                 controlsTextStyle
             ),
             this.add.text(
@@ -316,37 +317,37 @@ export class CatchGame extends Phaser.Scene {
                 ch * 0.5 + 140,
                 '[space] to return to city',
                 creditsTextStyle
-            )
+            ),
 
-        //     this.add.text(
-        //         +this.game.config.width / 2 - 200,
-        //         +this.game.config.height / 2 - 150,
-        //         this.playerTwo.name + ': ← [J] [L] ➔',
-        //         controlsTextStyle
-        //     ),
+            //     this.add.text(
+            //         +this.game.config.width / 2 - 200,
+            //         +this.game.config.height / 2 - 150,
+            //         this.playerTwo.name + ': ← [J] [L] ➔',
+            //         controlsTextStyle
+            //     ),
 
-        //     this.add.circle(w - 420, h - 120, 20, this.ballTypes[0].color),
-        //     this.add.circle(w - 220, h - 120, 20, this.ballTypes[1].color),
-        //     this.add.circle(w - 10, h - 120, 20, this.ballTypes[2].color),
-        //     this.add.text(
-        //         cw * 0.5 - 250,
-        //         ch * 0.5 + 20,
-        //         this.ballTypes[0].effect + ' pkt.',
-        //         creditsTextStyle
-        //     ),
-        //     this.add.text(
-        //         cw * 0.5 - 70,
-        //         ch * 0.5 + 20,
-        //         this.ballTypes[1].effect + ' pkt.',
-        //         creditsTextStyle
-        //     ),
-        //     this.add.text(
-        //         cw * 0.5 + 140,
-        //         ch * 0.5 + 20,
-        //         this.ballTypes[2].effect + ' pkt.',
-        //         creditsTextStyle
-        //     ),
-        ]);
+            //     this.add.circle(w - 420, h - 120, 20, this.ballTypes[0].color),
+            //     this.add.circle(w - 220, h - 120, 20, this.ballTypes[1].color),
+            //     this.add.circle(w - 10, h - 120, 20, this.ballTypes[2].color),
+            //     this.add.text(
+            //         cw * 0.5 - 250,
+            //         ch * 0.5 + 20,
+            //         this.ballTypes[0].effect + ' pkt.',
+            //         creditsTextStyle
+            //     ),
+            //     this.add.text(
+            //         cw * 0.5 - 70,
+            //         ch * 0.5 + 20,
+            //         this.ballTypes[1].effect + ' pkt.',
+            //         creditsTextStyle
+            //     ),
+            //     this.add.text(
+            //         cw * 0.5 + 140,
+            //         ch * 0.5 + 20,
+            //         this.ballTypes[2].effect + ' pkt.',
+            //         creditsTextStyle
+            //     ),
+        ])
         // this.overlayGroup[0].contains
     }
 
@@ -373,14 +374,14 @@ export class CatchGame extends Phaser.Scene {
             20,
             "Save the City - \nBe a Hero",
             playerTextStyle
-        );
+        )
 
         this.playerOneText = this.add.text(
             20,
             100,
             "Catching Energy",
             playerTextStyle
-        );
+        )
 
     }
 
@@ -414,7 +415,7 @@ export class CatchGame extends Phaser.Scene {
                     fontSize: '20px',
                     // wordWrap: { width: 600 },
                     fontFamily: MAIN_FONT,
-                });    
+                });
     }
 
     addScoreText() {
@@ -457,144 +458,148 @@ export class CatchGame extends Phaser.Scene {
     }
 
     getFormatedScoreText(player, score) {
-        return player.name + ": " + score;
+        return player.name + ': ' + score
     }
 
-    tween(currX:number, nextX:number, easingFactor = 0.1) {
+    tween(currX: number, nextX: number, easingFactor = 0.1) {
         if (easingFactor <= 0 || easingFactor >= 1) {
-            throw new Error("Easing factor must be between 0 and 1 (exclusive).");
+            throw new Error(
+                'Easing factor must be between 0 and 1 (exclusive).'
+            )
         }
 
         // Calculate the difference and apply the easing
-        const delta = nextX - currX;
-        const step = delta * easingFactor;
+        const delta = nextX - currX
+        const step = delta * easingFactor
 
-        // Update the current position
-        currX += step;
+        // Update the current ition
+        currX += step
 
         // Return the updated position
-        return currX;
+        return currX
     }
 
     update() {
         this.tick = (this.tick + 1) % Number.MAX_VALUE
 
- 
         for (const ball of this.ballPool) {
-            const isIngame = this.gamestate == CatchGame.State.INGAME;
-            const playerOneDidCollide = isIngame && this.circleRectangleIntersect(ball, this.paddleOne.__proto__);
-            const playerTwoDidCollide = isIngame && this.circleRectangleIntersect(ball, this.paddleTwo.__proto__);
-            const ballReachedEnd = ball.currY > this.game.config.height;
-            const didCollide = ballReachedEnd || (playerOneDidCollide || playerTwoDidCollide);
+            const isIngame = this.gamestate == CatchGame.State.INGAME
+            const playerOneDidCollide =
+                isIngame &&
+                this.circleRectangleIntersect(ball, this.paddleOne.__proto__)
+            const playerTwoDidCollide =
+                isIngame &&
+                this.circleRectangleIntersect(ball, this.paddleTwo.__proto__)
+            const ballReachedEnd = ball.currY > this.game.config.height
+            const didCollide =
+                ballReachedEnd || playerOneDidCollide || playerTwoDidCollide
 
-            if(playerOneDidCollide) {
-                this.playerOneScore += ball.effect;
+            if (playerOneDidCollide) {
+                this.playerOneScore += ball.effect
                 // this.gamecontrol.getPlayerAt(0).addScore(ball.effect);
             }
-            if(playerTwoDidCollide) {
-                this.playerTwoScore += ball.effect;
+            if (playerTwoDidCollide) {
+                this.playerTwoScore += ball.effect
                 // this.gamecontrol.getPlayerAt(1).addScore(ball.effect);
             }
 
             if (didCollide) {
-                console.log("The circle and rectangle intersect.");
+                console.log('The circle and rectangle intersect.')
                 this.updateBall(ball)
-                ball.sprite.fillColor = ball.color;
-                ball.currY = -100;
-                ball.velY = (Math.random() * 6 + 2) * 0.000001;
+                ball.sprite.fillColor = ball.color
+                ball.currY = -100
+                ball.velY = (Math.random() * 6 + 2) * 0.000001
                 // console.log(ball);
             }
 
-            ball.currY = this.tween(ball.currY, ball.nextY, ball.velY);
+            ball.currY = this.tween(ball.currY, ball.nextY, ball.velY)
             ball.sprite.setX(ball.currX)
             ball.sprite.setY(ball.currY)
         }
 
-
-        this.calculatePaddleMovement();
+        this.calculatePaddleMovement()
         if (this.gamestate == CatchGame.State.INGAME) {
             //console.log('!!!!', this)
         }
-        this.updateText();
+        this.updateText()
     }
 
     _circleRectangleIntersect(circle: any, rectangle: any) {
-        const { currX: cx, currY: cy, r: radius } = circle;
-        const { x: rx, y: ry, size: size} = rectangle;
-        const width = size;
-        const height = size;
+        const { currX: cx, currY: cy, r: radius } = circle
+        const { x: rx, y: ry, size: size } = rectangle
+        const width = size
+        const height = size
 
         // Find the closest point on the rectangle to the circle's center
-        const closestX = Math.max(rx, Math.min(cx, rx + width));
-        const closestY = Math.max(ry, Math.min(cy, ry + height));
+        const closestX = Math.max(rx, Math.min(cx, rx + width))
+        const closestY = Math.max(ry, Math.min(cy, ry + height))
 
         // Calculate the distance between the circle's center and this closest point
-        const distanceX = cx - closestX;
-        const distanceY = cy - closestY;
+        const distanceX = cx - closestX
+        const distanceY = cy - closestY
 
         // Check if the distance is less than the circle's radius
-        return (distanceX ** 2 + distanceY ** 2) <= (radius ** 2);
+        return distanceX ** 2 + distanceY ** 2 <= radius ** 2
     }
 
     circleRectangleIntersect(circle: any, rectangle: any) {
-
-        const { currX: cx, currY: cy, r: radius } = circle;
-        const { x: rx, y: ry, width: size} = rectangle;
+        const { currX: cx, currY: cy, r: radius } = circle
+        const { x: rx, y: ry, width: size } = rectangle
         // debugger;
-        const width = size;
-        const height = size;
+        const width = size
+        const height = size
 
         // Find the closest point on the rectangle to the circle's center
-        const closestX = Math.max(rx, Math.min(cx, rx + width));
-        const closestY = Math.max(ry, Math.min(cy, ry + height));
+        const closestX = Math.max(rx, Math.min(cx, rx + width))
+        const closestY = Math.max(ry, Math.min(cy, ry + height))
 
         // Calculate the distance between the circle's center and this closest point
-        const distanceX = cx - closestX;
-        const distanceY = cy - closestY;
+        const distanceX = cx - closestX
+        const distanceY = cy - closestY
 
         // Check if the distance is less than the circle's radius
-        return (distanceX ** 2 + distanceY ** 2) <= (radius ** 2);
+        return distanceX ** 2 + distanceY ** 2 <= radius ** 2
     }
-       
+
     calculatePaddleMovement() {
-               this.computePaddlesFloat(this.paddleOne)
-               this.computePaddlesFloat(this.paddleTwo)
-               // console.log(this)
-               if (this.paddleOne.leftKey.isDown) {
-                   this.paddleOne.nextX -= 10
-               }
-               if (this.paddleOne.rightKey.isDown) {
-                   // console.log("aaaa");
-                   this.paddleOne.nextX += 10
-               }
-               if (this.paddleTwo.leftKey.isDown) {
-                   this.paddleTwo.nextX -= 10
-               }
-               if (this.paddleTwo.rightKey.isDown) {
-                   // console.log("aaaa");
-                   this.paddleTwo.nextX += 10
-               }
+        this.computePaddlesFloat(this.paddleOne)
+        this.computePaddlesFloat(this.paddleTwo)
+        // console.log(this)
+        if (this.paddleOne.leftKey.isDown) {
+            this.paddleOne.nextX -= 10
+        }
+        if (this.paddleOne.rightKey.isDown) {
+            // console.log("aaaa");
+            this.paddleOne.nextX += 10
+        }
+        if (this.paddleTwo.leftKey.isDown) {
+            this.paddleTwo.nextX -= 10
+        }
+        if (this.paddleTwo.rightKey.isDown) {
+            // console.log("aaaa");
+            this.paddleTwo.nextX += 10
+        }
 
-       this.paddleOne.currX = this.tween(
-           this.paddleOne.currX,
-           this.paddleOne.nextX,
-           0.1
-       )
-       this.paddleTwo.currX = this.tween(
-           this.paddleTwo.currX,
-           this.paddleTwo.nextX,
-           0.1
-       )
+        this.paddleOne.currX = this.tween(
+            this.paddleOne.currX,
+            this.paddleOne.nextX,
+            0.1
+        )
+        this.paddleTwo.currX = this.tween(
+            this.paddleTwo.currX,
+            this.paddleTwo.nextX,
+            0.1
+        )
 
-       this.paddleOne.__proto__.setX(this.paddleOne.currX)
+        this.paddleOne.__proto__.setX(this.paddleOne.currX)
 
-       this.paddleTwo.currX = this.tween(
-           this.paddleTwo.currX,
-           this.paddleTwo.nextX,
-           0.1
-       )
+        this.paddleTwo.currX = this.tween(
+            this.paddleTwo.currX,
+            this.paddleTwo.nextX,
+            0.1
+        )
 
-       this.paddleTwo.__proto__.setX(this.paddleTwo.currX)
+        this.paddleTwo.__proto__.setX(this.paddleTwo.currX)
     }
 
     computePaddlesFloat(paddle: any) {
@@ -611,7 +616,7 @@ export class CatchGame extends Phaser.Scene {
             callback: this.updateCountdown,
             callbackScope: this,
             loop: true,
-        });
+        })
     }
 
     initBindings() {
@@ -621,9 +626,9 @@ export class CatchGame extends Phaser.Scene {
                     item.destroy(true)
                 }
                 this.startGameloop()
-            } else if(this.gamestate == CatchGame.State.OUTRO) {
-                this.gamecontrol.getPlayerAt(0).addScore(this.playerOneScore);
-                this.gamecontrol.getPlayerAt(1).addScore(this.playerTwoScore);
+            } else if (this.gamestate == CatchGame.State.OUTRO) {
+                this.gamecontrol.getPlayerAt(0).addScore(this.playerOneScore)
+                this.gamecontrol.getPlayerAt(1).addScore(this.playerTwoScore)
                 this.scene.start('Lobby')
             }
         })
@@ -637,12 +642,11 @@ export class CatchGame extends Phaser.Scene {
     // }
 
     updateCountdown() {
-        this.countdown--;
+        this.countdown--
         if (this.countdown <= 0) {
-            this.gamestate = CatchGame.State.OUTRO;
-            this.countdownTimer.destroy();
-            this.addOutroOverlay();
+            this.gamestate = CatchGame.State.OUTRO
+            this.countdownTimer.destroy()
+            this.addOutroOverlay()
         }
     }
-
 }
