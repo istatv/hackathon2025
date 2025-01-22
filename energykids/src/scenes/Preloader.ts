@@ -6,6 +6,13 @@ export class Preloader extends Scene {
     }
 
     init() {
+        this.add
+            .text(0, 0, 'Loading', {
+                fontFamily: 'MightySoul',
+                fontSize: '56px',
+                color: 'white',
+            })
+            .setOrigin(0.5, 0.5)
         //  We loaded this image in our Boot Scene, so we can display it here
         this.add.image(512, 384, 'background')
 
@@ -26,6 +33,15 @@ export class Preloader extends Scene {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets')
 
+        this.load.image([
+            { key: 'city_background1', url: 'city/Background_worstcase_0.png' },
+            { key: 'city_background2', url: 'city/Background_ok_33.png' },
+            { key: 'city_background3', url: 'city/Background_good_66.png' },
+            {
+                key: 'city_background4',
+                url: 'city/Background_bestcase_100.png',
+            },
+        ])
         this.load.svg([
             { key: 'kyo1', url: 'kyo2-06.svg' },
             { key: 'kyo2', url: 'kyo2-07.svg' },

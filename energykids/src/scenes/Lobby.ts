@@ -83,7 +83,6 @@ export class Lobby extends Scene {
     }
 
     renderCityAndScore() {
-        this.add.image(512, 384, 'background')
         this.add.text(50, 50, 'Save the city - \nBe the hero', {
             fontFamily: 'MightySoul',
             fontSize: '50px',
@@ -94,39 +93,30 @@ export class Lobby extends Scene {
         const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
         const cityOrigin = new Point(-0.1, 0)
 
+        const backgroundPosition = new Point(512, 384)
         const scorePosition = new Point(100, 680)
 
-        switch (true) {
-            case percentage == 0:
-                this.add.image(scorePosition.x, scorePosition.y, 'life1')
-                this.add
-                    .image(0, 0, 'city1')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-            case percentage <= 33:
-                this.add.image(scorePosition.x, scorePosition.y, 'life2')
+        let number = 1 // Default == bad
 
-                this.add
-                    .image(0, 0, 'city2')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-
-            case percentage <= 66:
-                this.add.image(scorePosition.x, scorePosition.y, 'life3')
-
-                this.add
-                    .image(0, 0, 'city3')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-
-            default:
-                this.add.image(scorePosition.x, scorePosition.y, 'life4')
-
-                this.add
-                    .image(0, 0, 'city4')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
+        if (percentage >= 33) {
+            number = 2
         }
+        if (percentage >= 66) {
+            number = 3
+        }
+        if (percentage >= 100) {
+            number = 4
+        }
+
+        this.add.image(
+            backgroundPosition.x,
+            backgroundPosition.y,
+            'city_background' + number
+        )
+        this.add.image(scorePosition.x, scorePosition.y, 'life' + number)
+        this.add
+            .image(0, 0, 'city' + number)
+            .setOrigin(cityOrigin.x, cityOrigin.y)
 
         // Total score
         this.add
