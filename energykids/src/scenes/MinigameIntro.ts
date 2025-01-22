@@ -31,8 +31,7 @@ export class MinigameIntro extends Scene {
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)
 
-        this.background = this.add.image(512, 384, 'background-minigame')
-        this.background.setDisplaySize(1024, 768)
+        this.background = this.add.image(512, 384, 'pb_background')
 
         // Add Title
         this.add.text(0, 150, this.config.title, {
@@ -71,6 +70,7 @@ export class MinigameIntro extends Scene {
         const gameControl = EnergykidsGamecontrol.getInstance()
         const playerAmount = gameControl.getPlayers().length
         const division = +this.game.config.width / (playerAmount + 1)
+        this.players = []
 
         for (let i = 0; i < playerAmount; i++) {
             const position = new Point(
@@ -178,7 +178,6 @@ export class MinigameIntro extends Scene {
             })
             .on('pointerdown', () => {
                 this.scene.start('Lobby')
-                this.players = []
             })
         this.add
             .text(950, 50, 'Exit', {
