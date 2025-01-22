@@ -6,16 +6,16 @@ import { Minigames } from '../shared/Minigames.ts'
 
 export class Lobby extends Scene {
     background: Phaser.GameObjects.Image
-    controller: EnergykidsGamecontrol
+    gameState: EnergykidsGamecontrol
     private players: Player[]
 
     constructor() {
         super('Lobby')
-        this.controller = EnergykidsGamecontrol.getInstance()
+        this.gameState = EnergykidsGamecontrol.getInstance()
     }
 
     create() {
-        this.players = this.controller.getPlayers()
+        this.players = this.gameState.getPlayers()
         this.renderCity()
         this.renderScores()
         this.renderButtons()
@@ -54,6 +54,10 @@ export class Lobby extends Scene {
             .on('pointerout', () => {
                 restartButton.setTexture('button_exit')
             })
+            .on('pointerdown', () => {
+                this.players[0].addScore(50)
+                this.scene.restart()
+            })
         this.add
             .text(950, 50, 'Restart', {
                 fontSize: '21px',
@@ -67,7 +71,7 @@ export class Lobby extends Scene {
 
         // Total score
         this.add
-            .text(100, 700, this.controller.getTotalScore().toString(), {
+            .text(100, 700, this.gameState.getTotalScore().toString(), {
                 fontSize: '24px',
                 color: '#ffffff',
             })
@@ -97,6 +101,21 @@ export class Lobby extends Scene {
     renderCity() {
         this.add.image(512, 384, 'background')
         this.add.text(50, 50, 'Save the city - \nBe the hero')
+        const score = this.gameState.getTotalScore()
+        const scoreGoal = this.gameState.getTotalScoreGoal()
+
+        const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
+        console.log(score, scoreGoal, percentage)
+        switch (true) {
+            case percentage == 0:
+                return this.add.image(0, 0, 'city1').setOrigin(0, 0)
+            case percentage <= 33:
+                return this.add.image(0, 0, 'city2').setOrigin(0, 0)
+            case percentage <= 66:
+                return this.add.image(0, 0, 'city3').setOrigin(0, 0)
+            default:
+                return this.add.image(0, 0, 'city4').setOrigin(0, 0)
+        }
     }
 
     updatePlayerName(playerName: Phaser.GameObjects.Text, player: Player) {

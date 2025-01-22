@@ -1,4 +1,5 @@
 import { Player } from './entities/Player.ts'
+
 export class EnergykidsGamecontrol {
     private static instance: EnergykidsGamecontrol | null = null
 
@@ -25,7 +26,7 @@ export class EnergykidsGamecontrol {
 
     private init() {
         this.players = [new Player('Player One'), new Player('Player Two')]
-        this.setTotalScoreGoal(0)
+        this.setTotalScoreGoal(1000)
     }
 
     reset() {

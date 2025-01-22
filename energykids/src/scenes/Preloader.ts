@@ -26,26 +26,45 @@ export class Preloader extends Scene {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets')
 
-        this.load.image([
+        this.load.svg([
             { key: 'kyo1', url: 'kyo2-06.svg' },
             { key: 'kyo2', url: 'kyo2-07.svg' },
-            { key: 'city1', url: 'City_State_0_bad.svg' },
-            { key: 'city2', url: 'City_State_33_ok.svg' },
-            { key: 'city3', url: 'City_State_66_good.svg' },
-            { key: 'city4', url: 'City_State_100_best.svg' },
-            { key: 'life1', url: 'City_Life_Score_0.svg' },
-            { key: 'life2', url: 'City_Life_Score_33.svg' },
-            { key: 'life3', url: 'City_Life_Score_66.svg' },
-            { key: 'life4', url: 'City_Life_Score_100.svg' },
-            { key: 'button_start', url: 'Button_StartGame_default.svg' },
+            {
+                key: 'city1',
+                url: 'city/City_State_0_bad.svg',
+                svgConfig: { scale: 1 },
+            },
+            {
+                key: 'city2',
+                url: 'city/City_State_33_ok.svg',
+                svgConfig: { scale: 1 },
+            },
+            {
+                key: 'city3',
+                url: 'city/City_State_66_good.svg',
+                svgConfig: { scale: 1 },
+            },
+            {
+                key: 'city4',
+                url: 'city/City_State_100_best.svg',
+                svgConfig: { scale: 1 },
+            },
+            { key: 'life1', url: 'city/City_Life_Score_0.svg' },
+            { key: 'life2', url: 'city/City_Life_Score_33.svg' },
+            { key: 'life3', url: 'city/City_Life_Score_66.svg' },
+            { key: 'life4', url: 'city/City_Life_Score_100.svg' },
+            {
+                key: 'button_start',
+                url: 'buttons/Button_StartGame_default.svg',
+            },
             {
                 key: 'button_start_hover',
-                url: 'Button_StartGame_hover_pressed.svg',
+                url: 'buttons/Button_StartGame_hover_pressed.svg',
             },
-            { key: 'button_exit', url: 'Button_ExitGame_default.svg' },
+            { key: 'button_exit', url: 'buttons/Button_ExitGame_default.svg' },
             {
                 key: 'button_exit_hover',
-                url: 'Button_ExitGame_dHover_pressed.svg',
+                url: 'buttons/Button_ExitGame_dHover_pressed.svg',
             },
         ])
     }
