@@ -50,7 +50,7 @@ export class Lobby extends Scene {
         this.add.rectangle(100, 700, 100, 50, 0x0000ff)
 
         const status = this.add
-            .text(100, 700, 'Status', {
+            .text(100, 700, this.controller.getTotalScore().toString(), {
                 fontSize: '24px',
                 color: '#ffffff',
             })
