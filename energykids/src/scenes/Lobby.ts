@@ -1,11 +1,13 @@
 import { Scene } from 'phaser'
 import { EnergykidsGamecontrol } from '../shared/EnergykidsGamecontrol.ts'
-import {Player} from "../shared/Player.ts";
+import { Player } from '../shared/entities/Player.ts'
+import { Minigame } from '../shared/entities/Minigame.ts'
+import { Minigames } from '../shared/Minigames.ts'
 
 export class Lobby extends Scene {
     background: Phaser.GameObjects.Image
     controller: EnergykidsGamecontrol
-    private players: Player[];
+    private players: Player[]
 
     constructor() {
         super('Lobby')
@@ -15,14 +17,15 @@ export class Lobby extends Scene {
     create() {
         this.background = this.add.image(512, 384, 'background')
         this.players = this.controller.getPlayers()
-        this.add.text(50,50,"Save the city - \nBe the hero")
+        this.add.text(50, 50, 'Save the city - \nBe the hero')
 
         const start_game = this.add
             .rectangle(150, 125, 200, 50, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
-                const randomNumber = Phaser.Math.Between(1, 5)
-                this.launchMiniGame(randomNumber)
+                this.launchMiniGame(
+                    Minigames[Phaser.Math.Between(0, Minigames.length - 1)]
+                )
             })
 
         this.add
@@ -35,9 +38,7 @@ export class Lobby extends Scene {
         const exit = this.add
             .rectangle(950, 50, 100, 50, 0x0000ff)
             .setInteractive()
-            .on('pointerdown', () => {
-
-            })
+            .on('pointerdown', () => {})
 
         this.add
             .text(950, 50, 'Exit', {
@@ -46,8 +47,7 @@ export class Lobby extends Scene {
             })
             .setOrigin(0.5)
 
-        this.add
-            .rectangle(100, 700, 100, 50, 0x0000ff)
+        this.add.rectangle(100, 700, 100, 50, 0x0000ff)
 
         const status = this.add
             .text(100, 700, 'Status', {
@@ -69,7 +69,6 @@ export class Lobby extends Scene {
             .on('pointerdown', () => {
                 this.updatePlayerName(player1name, this.players[0])
             })
-
 
         const player1name = this.add.text(350, 725, this.players[0].name, {})
         const player2name = this.add.text(550, 725, this.players[1].name, {})
@@ -116,9 +115,9 @@ export class Lobby extends Scene {
             .setOrigin(0.5)
             .setInteractive()
             .on('pointerdown', () => {
-                const userName = inputElement.value;
-                playerName.text = userName;
-                player.name = userName;
+                const userName = inputElement.value
+                playerName.text = userName
+                player.name = userName
 
                 // Cleanup popup elements
                 overlay.destroy()
@@ -129,10 +128,14 @@ export class Lobby extends Scene {
             })
     }
 
-    launchMiniGame(gamenumber: number) {
-        this.scene.start('PushButtonGame')
-        // if (gamenumber == 1){
-        //     this.scene.start('PushButtonGame')
-        // }
+    launchMiniGame(game: Minigame) {
+        // Add data to the registry
+        this.registry.set('sceneConfig', {
+            title: game.title,
+            tutorialText: game.tutorialText,
+            sceneToStart: game.sceneName,
+        })
+
+        this.scene.start('MinigameIntro')
     }
 }

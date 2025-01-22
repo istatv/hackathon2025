@@ -6,7 +6,7 @@ import { Preloader } from './scenes/Preloader'
 
 import { Game, Types } from 'phaser'
 import { PushButtonGame } from './scenes/minigames/PushButtonGame.ts'
-import { MinigameIntro } from './scenes/minigames/MinigameIntro.ts'
+import { MinigameIntro } from './scenes/MinigameIntro.ts'
 import { CatchGame } from './scenes/minigames/CatchGame.ts'
 
 //  Find out more information about the Game Config at:
@@ -24,8 +24,7 @@ const config: Types.Core.GameConfig = {
     scene: generateAvailableScenes(),
 }
 
-function generateAvailableScenes() 
-{
+function generateAvailableScenes() {
     const coreScenes = [
         Boot,
         Preloader,
@@ -33,14 +32,11 @@ function generateAvailableScenes()
         MainGame,
         GameOver,
         MinigameIntro,
-    ];
+    ]
 
-    const minigameScenes = [
-        PushButtonGame,
-        CatchGame,
-    ];
+    const minigameScenes = [PushButtonGame, CatchGame]
 
-    return [].concat(coreScenes, minigameScenes);
+    return [].concat(coreScenes, minigameScenes)
 }
 
 export default new Game(config)

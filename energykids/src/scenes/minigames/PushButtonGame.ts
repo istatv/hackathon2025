@@ -1,4 +1,4 @@
-import { Player } from "../../shared/Player"
+import { Player } from '../../shared/entities/Player.ts'
 import Rectangle = Phaser.GameObjects.Rectangle
 import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
 import TimeStep = Phaser.Core.TimeStep
@@ -126,7 +126,7 @@ export class PushButtonGame extends Phaser.Scene {
             +this.game.config.height / 2 - 100,
             'Congratulations ' +
                 player.name +
-                ', you have won! \n\n Press enter to return to the lobby.',
+                ', you have won! \n\n Press enter to return to the city.',
             {
                 align: 'center',
                 fontSize: '40px',

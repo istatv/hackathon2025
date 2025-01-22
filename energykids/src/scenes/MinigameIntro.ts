@@ -1,6 +1,6 @@
 import { Scene } from 'phaser'
-import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol.ts'
-import { Util } from '../../shared/Util.ts'
+import { EnergykidsGamecontrol } from '../shared/EnergykidsGamecontrol.ts'
+import { Util } from '../shared/Util.ts'
 import Rectangle = Phaser.GameObjects.Rectangle
 import Text = Phaser.GameObjects.Text
 import Point = Phaser.Geom.Point
@@ -46,7 +46,7 @@ export class MinigameIntro extends Scene {
         this.add.text(
             0,
             +this.game.config.height / 2 - 250,
-            this.config.description,
+            this.config.tutorialText,
             {
                 align: 'justify',
                 fontSize: 25,

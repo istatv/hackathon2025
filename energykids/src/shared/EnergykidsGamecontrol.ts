@@ -1,42 +1,39 @@
-import { Player } from "./Player";
+import { Player } from './entities/Player.ts'
 export class EnergykidsGamecontrol {
     private static instance: EnergykidsGamecontrol | null = null
 
     public static GameState = {
-        BEFORE_GAME: "BEFORE_GAME",
-        INGAME_LOBBY: "INGAME_LOBBY",
-        INGAME_MINI: "INGAME_MINI",
-        FINAL: "FINAL"
-    };
+        BEFORE_GAME: 'BEFORE_GAME',
+        INGAME_LOBBY: 'INGAME_LOBBY',
+        INGAME_MINI: 'INGAME_MINI',
+        FINAL: 'FINAL',
+    }
 
     public static LobbyEvent = {
-        MINIGAME: "MINIGAME",
-        DESASTER: "DESASTER",
-    };
+        MINIGAME: 'MINIGAME',
+        DESASTER: 'DESASTER',
+    }
 
-    private players: Player[];
-    private totalScoreGoal: number = -1;
-    private eventRegistry: any;
+    private players: Player[]
+    private totalScoreGoal: number = -1
+    private eventRegistry: any
 
     constructor() {
-        this.init();
-        this.eventRegistry = {};
+        this.init()
+        this.eventRegistry = {}
     }
 
     private init() {
-        this.players = [
-            new Player('Player One'),
-            new Player('Player Two')
-        ];
-        this.setTotalScoreGoal(0);
+        this.players = [new Player('Player One'), new Player('Player Two')]
+        this.setTotalScoreGoal(0)
     }
 
     reset() {
         this.init()
     }
 
-    getPlayerAt(idx: number) : Player {
-        return this.players[idx];
+    getPlayerAt(idx: number): Player {
+        return this.players[idx]
     }
 
     getTotalScoreGoal(): number {
@@ -64,27 +61,27 @@ export class EnergykidsGamecontrol {
         return this.players
     }
 
-    registerMinigame(scene: any, identifier : string, clearname: string) {
+    registerMinigame(scene: any, identifier: string, clearname: string) {
         const event = {
             type: EnergykidsGamecontrol.LobbyEvent.MINIGAME,
             identifier,
             scene,
             isActive: false,
-        };
+        }
 
-        this.eventRegistry[identifier] = event;
-    }
-    
-    getLobbyEvents() : any {
-        return this.eventRegistry;
+        this.eventRegistry[identifier] = event
     }
 
-    randomLobbyEvent() : any {
-        const keys  = Object.keys(this.eventRegistry);
-        const keysAmount = keys.length - 1;
-        const idx = Math.round(999999 * Math.random()) % keysAmount;
-        const ident = keys[idx];
-        return this.eventRegistry[ident];
+    getLobbyEvents(): any {
+        return this.eventRegistry
+    }
+
+    randomLobbyEvent(): any {
+        const keys = Object.keys(this.eventRegistry)
+        const keysAmount = keys.length - 1
+        const idx = Math.round(999999 * Math.random()) % keysAmount
+        const ident = keys[idx]
+        return this.eventRegistry[ident]
     }
 
     // Singleton access method
