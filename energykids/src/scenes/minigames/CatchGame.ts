@@ -545,6 +545,8 @@ export class CatchGame extends Phaser.Scene {
                 }
                 this.startGameloop()
             } else if(this.gamestate == CatchGame.State.OUTRO) {
+                this.gamecontrol.getPlayerAt(0).addScore(this.playerOneScore);
+                this.gamecontrol.getPlayerAt(1).addScore(this.playerTwoScore);
                 this.scene.start('Lobby')
             }
         })
