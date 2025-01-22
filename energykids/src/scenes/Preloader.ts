@@ -1,6 +1,7 @@
 import { Scene } from 'phaser'
 import { loadLobbyAssets } from '../shared/assets/LobbyAssets.ts'
 import { loadPushButtonAssets } from '../shared/assets/PushButtonAssets.ts'
+import { loadCatchGameAssets } from '../shared/assets/CatchGameAssets.ts'
 
 export class Preloader extends Scene {
     constructor() {
@@ -37,11 +38,12 @@ export class Preloader extends Scene {
         this.load.setPath('assets')
         loadLobbyAssets(this.load)
         loadPushButtonAssets(this.load)
+        loadCatchGameAssets(this.load)
     }
 
     create() {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
-        this.scene.start('PushButtonGame')
+        this.scene.start('Lobby')
     }
 }
