@@ -53,4 +53,13 @@ export const loadLobbyAssets = (load: LoaderPlugin) => {
             url: 'buttons/Button_ExitGame_dHover_pressed.svg',
         },
     ])
+
+    load.audio([
+        { key: 'lobby_main_1', url: 'city/city1.ogg' },
+        { key: 'lobby_main_2', url: 'city/city2.ogg' },
+        { key: 'lobby_main_3', url: 'city/city3.ogg' },
+        { key: 'lobby_main_4', url: 'city/city4.ogg' },
+        { key: 'lobby_main_5', url: 'city/city5.ogg' },
+        { key: 'lobby_main_6', url: 'city/city6.ogg' },
+    ])
 }

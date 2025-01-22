@@ -1,6 +1,7 @@
 import LoaderPlugin = Phaser.Loader.LoaderPlugin
 
 export const loadPushButtonAssets = (load: LoaderPlugin) => {
+    load.image([{ key: 'pb_background', url: 'pushbutton/background.png' }])
     load.svg([
         { key: 'pb_kyo1_1', url: 'pushbutton/Kyo_blue_Bike_A.svg' },
         { key: 'pb_kyo1_2', url: 'pushbutton/Kyo_blue_Bike_B.svg' },

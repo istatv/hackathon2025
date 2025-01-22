@@ -108,6 +108,8 @@ export class Lobby extends Scene {
             number = 4
         }
 
+        this.sound.stopAll()
+        this.sound.play('lobby_main_' + number)
         this.add.image(
             backgroundPosition.x,
             backgroundPosition.y,
