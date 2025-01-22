@@ -45,7 +45,7 @@ export class MinigameIntro extends Scene {
 
         // Add Description
         this.add.text(
-            150,
+            100,
             +this.game.config.height / 2 - 150,
             this.config.tutorialText,
             {
@@ -55,7 +55,7 @@ export class MinigameIntro extends Scene {
                     right: 80,
                 },
                 wordWrap: {
-                    width: 600,
+                    width: 700,
                     useAdvancedWrap: false,
                 },
                 fontSize: '32px',
@@ -166,10 +166,34 @@ export class MinigameIntro extends Scene {
         }
     }
 
+    renderButtons() {
+        const restartButton = this.add
+            .image(950, 50, 'button_exit')
+            .setInteractive()
+            .on('pointerover', () => {
+                restartButton.setTexture('button_exit_hover')
+            })
+            .on('pointerout', () => {
+                restartButton.setTexture('button_exit')
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Lobby')
+                this.players = []
+            })
+        this.add
+            .text(950, 50, 'Exit', {
+                fontSize: '21px',
+                color: '#0165E4',
+                fontFamily: 'MightySoul',
+            })
+            .setOrigin(0.45, 1)
+    }
+
     create() {
         this.config = this.registry.get('sceneConfig')
         this.setupScene()
         this.renderPlayers()
         this.waitUntilReady()
+        this.renderButtons()
     }
 }
