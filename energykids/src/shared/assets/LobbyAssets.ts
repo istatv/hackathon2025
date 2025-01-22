@@ -41,16 +41,16 @@ export const loadLobbyAssets = (load: LoaderPlugin) => {
         { key: 'life4', url: 'city/City_Life_Score_100.svg' },
         {
             key: 'button_start',
-            url: 'buttons/Button_StartGame_default.svg',
+            url: 'city/Button_StartGame_default.svg',
         },
         {
             key: 'button_start_hover',
-            url: 'buttons/Button_StartGame_hover_pressed.svg',
+            url: 'city/Button_StartGame_hover_pressed.svg',
         },
-        { key: 'button_exit', url: 'buttons/Button_ExitGame_default.svg' },
+        { key: 'button_exit', url: 'city/Button_ExitGame_default.svg' },
         {
             key: 'button_exit_hover',
-            url: 'buttons/Button_ExitGame_dHover_pressed.svg',
+            url: 'city/Button_ExitGame_dHover_pressed.svg',
         },
     ])
 

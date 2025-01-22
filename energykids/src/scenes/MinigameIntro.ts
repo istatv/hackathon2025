@@ -29,6 +29,8 @@ export class MinigameIntro extends Scene {
     }
 
     setupScene() {
+        this.sound.stopAll()
+
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)
 
@@ -147,6 +149,7 @@ export class MinigameIntro extends Scene {
                             }
                         )
                         this.time.delayedCall(3000, () => {
+                            this.scene.stop()
                             this.scene.start(this.config.sceneToStart)
                         })
                     })
