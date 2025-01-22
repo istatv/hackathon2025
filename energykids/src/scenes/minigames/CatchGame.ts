@@ -47,13 +47,13 @@ export class CatchGame extends Phaser.Scene {
             { color: 0x00ff00, effect: 20 },
             { color: 0xffff00, effect: -10 },
         ]
-        this.initBallPool()
+
     }
 
     create() {
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0xff00ff)
-
+        this.initBallPool()
         this.addPlayers()
         this.addIntroOverlay()
         this.addBalls()
@@ -61,20 +61,20 @@ export class CatchGame extends Phaser.Scene {
     }
 
     initBallPool() {
+        const { width, height } = this.game.config;
         const totalBalls = 10
         for (let idx = 0; idx < totalBalls; idx++) {
             const rdx =
                 Math.floor(Date.now() * Math.random()) % this.ballTypes.length
-            console.log(rdx)
             const bt = this.ballTypes[rdx]
             const ball = {
                 id: idx,
                 // color: bt.color,
-                pX: 0,
-                pY: 0,
-                r: 10,
-                vY: 0,
-                isActive: false,
+                currX: Math.random() * width,
+                currY: (Math.random() * height) * -1,
+                nextY: 999999,
+                velY: (Math.random() * 3 + 2) * 0.000001,//Math.round(Math.random() * 10 + 5),
+                r: 15,
             }
             ball.__proto__ = bt
             this.ballPool.push(ball)
@@ -140,7 +140,8 @@ export class CatchGame extends Phaser.Scene {
 
         for (const ball of this.ballPool) {
             const step = ball.r + ball.r * 2
-            this.add.circle((dx += step), dy, ball.r, ball.color)
+            console.log(ball)
+            ball.sprite = this.add.circle(ball.currX, dy, ball.r, ball.color)
         }
     }
 
@@ -232,46 +233,63 @@ export class CatchGame extends Phaser.Scene {
 
     update() {
         this.tick = (this.tick + 1) % Number.MAX_VALUE
-        this.computePaddlesFloat(this.paddleOne)
-        this.computePaddlesFloat(this.paddleTwo)
-        console.log(this)
-        if(this.paddleOne.leftKey.isDown) {
-            this.paddleOne.nextX -= 10
-        }
-        if (this.paddleOne.rightKey.isDown) {
-            // console.log("aaaa");
-            this.paddleOne.nextX += 10
-        }
-        if (this.paddleTwo.leftKey.isDown) {
-            this.paddleTwo.nextX -= 10
-        }
-        if (this.paddleTwo.rightKey.isDown) {
-            // console.log("aaaa");
-            this.paddleTwo.nextX += 10
+ 
+        for (const ball of this.ballPool) {
+            ball.currY = this.tween(ball.currY, ball.nextY, ball.velY) // 0.000005 and 0.000002 = (Math.random() * 3 + 2) * 0.000001
+            console.log(ball)
+            if(ball.currY > this.game.config.height) {
+                ball.velY = (Math.random() * 6 + 2) * 0.000001;
+                ball.currY = -100;
+            }
+            ball.sprite.setY(ball.currY)
         }
 
 
-        this.paddleOne.currX = this.tween(this.paddleOne.currX, this.paddleOne.nextX, 0.1)
-
-        this.paddleTwo.currX = this.tween(
-            this.paddleTwo.currX,
-            this.paddleTwo.nextX,
-            0.1
-        )
-
-        this.paddleOne.__proto__.setX(this.paddleOne.currX)
-
-        this.paddleTwo.currX = this.tween(
-            this.paddleTwo.currX,
-            this.paddleTwo.nextX,
-            0.1
-        )
-
-        this.paddleTwo.__proto__.setX(this.paddleTwo.currX)
-
+        this.calculatePaddleMovement();
         if (this.gamestate == CatchGame.State.INGAME) {
             //console.log('!!!!', this)
         }
+    }
+
+    calculatePaddleMovement() {
+               this.computePaddlesFloat(this.paddleOne)
+               this.computePaddlesFloat(this.paddleTwo)
+               // console.log(this)
+               if (this.paddleOne.leftKey.isDown) {
+                   this.paddleOne.nextX -= 10
+               }
+               if (this.paddleOne.rightKey.isDown) {
+                   // console.log("aaaa");
+                   this.paddleOne.nextX += 10
+               }
+               if (this.paddleTwo.leftKey.isDown) {
+                   this.paddleTwo.nextX -= 10
+               }
+               if (this.paddleTwo.rightKey.isDown) {
+                   // console.log("aaaa");
+                   this.paddleTwo.nextX += 10
+               }
+
+       this.paddleOne.currX = this.tween(
+           this.paddleOne.currX,
+           this.paddleOne.nextX,
+           0.1
+       )
+       this.paddleTwo.currX = this.tween(
+           this.paddleTwo.currX,
+           this.paddleTwo.nextX,
+           0.1
+       )
+
+       this.paddleOne.__proto__.setX(this.paddleOne.currX)
+
+       this.paddleTwo.currX = this.tween(
+           this.paddleTwo.currX,
+           this.paddleTwo.nextX,
+           0.1
+       )
+
+       this.paddleTwo.__proto__.setX(this.paddleTwo.currX)
     }
 
     computePaddlesFloat(paddle: any) {
