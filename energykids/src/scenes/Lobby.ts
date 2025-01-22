@@ -3,6 +3,7 @@ import { EnergykidsGamecontrol } from '../shared/EnergykidsGamecontrol.ts'
 import { Player } from '../shared/entities/Player.ts'
 import { Minigame } from '../shared/entities/Minigame.ts'
 import { Minigames } from '../shared/Minigames.ts'
+import Point = Phaser.Geom.Point
 
 export class Lobby extends Scene {
     background: Phaser.GameObjects.Image
@@ -22,9 +23,10 @@ export class Lobby extends Scene {
     }
 
     renderButtons() {
+        const buttonPosition = new Point(150, 240)
         // Start game
         const startButton = this.add
-            .image(150, 125, 'button_start')
+            .image(buttonPosition.x, buttonPosition.y, 'button_start')
             .setInteractive()
             .on('pointerover', () => {
                 startButton.setTexture('button_start_hover')
@@ -39,9 +41,10 @@ export class Lobby extends Scene {
             })
 
         this.add
-            .text(150, 125, 'Start Game', {
-                fontSize: '24px',
-                color: '#000000',
+            .text(buttonPosition.x, buttonPosition.y, 'Start Game', {
+                fontSize: '32px',
+                color: '#0165E4',
+                fontFamily: 'MightySoul',
             })
             .setOrigin(0.5)
 
@@ -62,6 +65,7 @@ export class Lobby extends Scene {
             .text(950, 50, 'Restart', {
                 fontSize: '21px',
                 color: '#000000',
+                fontFamily: 'MightySoul',
             })
             .setOrigin(0.5)
     }
@@ -74,12 +78,15 @@ export class Lobby extends Scene {
             .text(100, 700, this.gameState.getTotalScore().toString(), {
                 fontSize: '24px',
                 color: '#ffffff',
+                fontFamily: 'MightySoul',
             })
             .setOrigin(0.5)
 
         // Player 1
         const playerOneName = this.add.text(350, 725, this.players[0].name, {}) // Name
-        this.add.text(350, 750, '0', {}) // Score
+        this.add.text(350, 750, '0', {
+            fontFamily: 'MightySoul',
+        }) // Score
         this.add
             .image(950, 700, 'kyo1')
             .setInteractive()
@@ -89,7 +96,9 @@ export class Lobby extends Scene {
 
         // Player 2
         const playerTwoName = this.add.text(550, 725, this.players[1].name, {}) // Name
-        this.add.text(550, 750, '0', {}) // Score
+        this.add.text(550, 750, '0', {
+            fontFamily: 'MightySoul',
+        }) // Score
         this.add
             .image(830, 700, 'kyo2')
             .setInteractive()
@@ -100,21 +109,32 @@ export class Lobby extends Scene {
 
     renderCity() {
         this.add.image(512, 384, 'background')
-        this.add.text(50, 50, 'Save the city - \nBe the hero')
+        this.add.text(50, 50, 'Save the city - \nBe the hero', {
+            fontFamily: 'MightySoul',
+            fontSize: '50px',
+            color: '#ABCFFB',
+        })
         const score = this.gameState.getTotalScore()
         const scoreGoal = this.gameState.getTotalScoreGoal()
-
         const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
-        console.log(score, scoreGoal, percentage)
+        const cityOrigin = new Point(-0.1, 0)
         switch (true) {
             case percentage == 0:
-                return this.add.image(0, 0, 'city1').setOrigin(0, 0)
+                return this.add
+                    .image(0, 0, 'city1')
+                    .setOrigin(cityOrigin.x, cityOrigin.y)
             case percentage <= 33:
-                return this.add.image(0, 0, 'city2').setOrigin(0, 0)
+                return this.add
+                    .image(0, 0, 'city2')
+                    .setOrigin(cityOrigin.x, cityOrigin.y)
             case percentage <= 66:
-                return this.add.image(0, 0, 'city3').setOrigin(0, 0)
+                return this.add
+                    .image(0, 0, 'city3')
+                    .setOrigin(cityOrigin.x, cityOrigin.y)
             default:
-                return this.add.image(0, 0, 'city4').setOrigin(0, 0)
+                return this.add
+                    .image(0, 0, 'city4')
+                    .setOrigin(cityOrigin.x, cityOrigin.y)
         }
     }
 
@@ -131,6 +151,7 @@ export class Lobby extends Scene {
             .text(512, 300, 'Enter Player Name:', {
                 fontSize: '24px',
                 color: '#000',
+                fontFamily: 'MightySoul',
             })
             .setOrigin(0.5)
 
@@ -153,6 +174,7 @@ export class Lobby extends Scene {
                 color: '#ffffff',
                 backgroundColor: '#0000ff',
                 padding: { x: 10, y: 5 },
+                fontFamily: 'MightySoul',
             })
             .setOrigin(0.5)
             .setInteractive()

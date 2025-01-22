@@ -4,26 +4,6 @@ body {
     color: rgba(255, 255, 255, 0.87);
     background-color: #000000;
 }
-  @font-face {
-        font-family: MightySouly-lxggD;
-        src: url('Fonts/MightySouly-lxggD.ttf');
-        font-weight:400;
-        font-weight:normal;
-      }
-
-  @font-face {
-        font-family: Monaco;
-        src: url('Fonts/Monaco.ttf');
-        font-weight:400;
-        font-weight:normal;
-      }
-
-  @font-face {
-        font-family: Mshtakan;
-        src: url('Fonts/Mshtakan.ttc');
-        font-weight:400;
-        font-weight:normal;
-      }
 
 #app {
     width: 100%;
