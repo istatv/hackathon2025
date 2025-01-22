@@ -8,17 +8,18 @@ export class PushButtonGame extends Phaser.Scene {
     public static readonly IDENTIFIER: string = 'PushButtonGame'
     camera: Phaser.Cameras.Scene2D.Camera
     background: Phaser.GameObjects.Image
-    msg_text: Phaser.GameObjects.Text
     time_step_player1: Phaser.Core.TimeStep
     time_step_player2: Phaser.Core.TimeStep
 
-    gamecontrol = EnergykidsGamecontrol.getInstance()
+    private gameState = EnergykidsGamecontrol.getInstance()
     private playerOne: Player
     private playerTwo: Player
 
     private static AMOUNT_TO_INCREASE = 150
     private static MAX_WIDTH = 800
-    private static REDUCTION_SPEED = 0.25
+    private static REDUCTION_SPEED = 0.35
+
+    private tick: number = 0
 
     private gameIsOver = true
 
@@ -31,14 +32,23 @@ export class PushButtonGame extends Phaser.Scene {
     private rectangle_player1: Phaser.GameObjects.Rectangle
     private rectangle_player2: Phaser.GameObjects.Rectangle
 
+    private playerState = [false, false]
+
     constructor() {
         super(PushButtonGame.IDENTIFIER)
-        this.playerOne = this.gamecontrol.getPlayerAt(0)
-        this.playerTwo = this.gamecontrol.getPlayerAt(1)
+        this.playerOne = this.gameState.getPlayerAt(0)
+        this.playerTwo = this.gameState.getPlayerAt(1)
     }
 
     renderBackground() {
-        this.add.image(0, 0, 'pb_background').setScale(0.5)
+        this.add.image(512, 384, 'pb_background')
+    }
+
+    computePaddlesFloat(paddle: any) {
+        let angle = ((this.tick + paddle.tOff) * 0.00051) % 360
+        let diff = 10 * Math.sin(angle * (180 / Math.PI))
+        let dy = paddle.oY + diff
+        paddle.__proto__.setY(dy)
     }
 
     renderText() {
@@ -98,19 +108,11 @@ export class PushButtonGame extends Phaser.Scene {
         )
 
         this.input.keyboard?.on('keyup-SPACE', () => {
-            this.buttonPush(
-                this.rectangle_player1,
-                this.playerOne,
-                this.gameIsOver
-            )
+            this.buttonPush(this.rectangle_player1, 0, this.gameIsOver)
         })
 
         this.input.keyboard?.on('keyup-CTRL', () => {
-            this.buttonPush(
-                this.rectangle_player2,
-                this.playerTwo,
-                this.gameIsOver
-            )
+            this.buttonPush(this.rectangle_player2, 1, this.gameIsOver)
         })
     }
 
@@ -129,12 +131,19 @@ export class PushButtonGame extends Phaser.Scene {
         }
     }
 
-    buttonPush(rectangle: Rectangle, player: Player, gameIsOver = false) {
+    buttonPush(rectangle: Rectangle, playerIndex: number, gameIsOver = false) {
         if (!gameIsOver) {
             if (rectangle.width < PushButtonGame.MAX_WIDTH) {
                 rectangle.width += PushButtonGame.AMOUNT_TO_INCREASE
+                this.playerState[playerIndex] = !this.playerState[playerIndex]
+                const imageNum = this.playerState[playerIndex] ? '1' : '2'
+                if (playerIndex === 0) {
+                    this.playerOneImage.setTexture('pb_kyo1_' + imageNum)
+                } else {
+                    this.playerTwoImage.setTexture('pb_kyo2_' + imageNum)
+                }
             } else {
-                this.gameWon(player)
+                this.gameWon(this.gameState.getPlayerAt(playerIndex))
             }
         }
     }
@@ -179,5 +188,12 @@ export class PushButtonGame extends Phaser.Scene {
                 this.gameIsOver = false
             }
         }
+    }
+
+    update(time: number, delta: number) {
+        super.update(time, delta)
+        this.tick = (this.tick + 1) % Number.MAX_VALUE
+
+        //this.computePaddlesFloat(this.playerOneImage)
     }
 }
