@@ -15,11 +15,14 @@ export class Lobby extends Scene {
     }
 
     create() {
-        this.background = this.add.image(512, 384, 'background')
         this.players = this.controller.getPlayers()
-        this.add.text(50, 50, 'Save the city - \nBe the hero')
+        this.renderCity()
+        this.renderScores()
+        this.renderButtons()
+    }
 
-        const start_game = this.add
+    renderButtons() {
+        this.add
             .rectangle(150, 125, 200, 50, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
@@ -35,7 +38,7 @@ export class Lobby extends Scene {
             })
             .setOrigin(0.5)
 
-        const exit = this.add
+        this.add
             .rectangle(950, 50, 100, 50, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {})
@@ -46,34 +49,43 @@ export class Lobby extends Scene {
                 color: '#ffffff',
             })
             .setOrigin(0.5)
+    }
 
+    renderScores() {
         this.add.rectangle(100, 700, 100, 50, 0x0000ff)
 
-        const status = this.add
+        // Total score
+        this.add
             .text(100, 700, this.controller.getTotalScore().toString(), {
                 fontSize: '24px',
                 color: '#ffffff',
             })
             .setOrigin(0.5)
 
-        const player2 = this.add
+        // Player 1
+        const playerOneName = this.add.text(350, 725, this.players[0].name, {}) // Name
+        this.add.text(350, 750, '0', {}) // Score
+        this.add
             .rectangle(950, 700, 100, 100, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
-                this.updatePlayerName(player2name, this.players[1])
+                this.updatePlayerName(playerOneName, this.players[0])
             })
 
-        const player1 = this.add
+        // Player 2
+        const playerTwoName = this.add.text(550, 725, this.players[1].name, {}) // Name
+        this.add.text(550, 750, '0', {}) // Score
+        this.add
             .rectangle(830, 700, 100, 100, 0x0000ff)
             .setInteractive()
             .on('pointerdown', () => {
-                this.updatePlayerName(player1name, this.players[0])
+                this.updatePlayerName(playerTwoName, this.players[1])
             })
+    }
 
-        const player1name = this.add.text(350, 725, this.players[0].name, {})
-        const player2name = this.add.text(550, 725, this.players[1].name, {})
-        const player1Score = this.add.text(350, 750, '0', {})
-        const player2Score = this.add.text(550, 750, '0', {})
+    renderCity() {
+        this.add.image(512, 384, 'background')
+        this.add.text(50, 50, 'Save the city - \nBe the hero')
     }
 
     updatePlayerName(playerName: Phaser.GameObjects.Text, player: Player) {
