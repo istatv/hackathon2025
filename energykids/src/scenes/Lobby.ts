@@ -8,7 +8,6 @@ import Point = Phaser.Geom.Point
 export class Lobby extends Scene {
     background: Phaser.GameObjects.Image
     gameState: EnergykidsGamecontrol
-    private players: Player[]
 
     constructor() {
         super('Lobby')
@@ -16,7 +15,6 @@ export class Lobby extends Scene {
     }
 
     create() {
-        this.players = this.gameState.getPlayers()
         this.renderCityAndScore()
         this.renderPlayerScores()
         this.renderButtons()
@@ -58,7 +56,7 @@ export class Lobby extends Scene {
                 restartButton.setTexture('button_exit')
             })
             .on('pointerdown', () => {
-                this.players[0].addScore(50)
+                this.gameState.getPlayerAt(0).addScore(50)
                 this.scene.restart()
             })
 
@@ -72,33 +70,19 @@ export class Lobby extends Scene {
     }
 
     renderPlayerScores() {
-        // Player 1
-        const playerOneName = this.add.text(350, 725, this.players[0].name, {}) // Name
-        this.add.text(350, 750, '0', {
-            fontFamily: 'MightySoul',
-        }) // Score
-        this.add
-            .image(950, 700, 'kyo1')
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.updatePlayerName(playerOneName, this.players[0])
-            })
+        this.add.image(900, 665, 'lobby_score')
+        this.renderPlayerNameAndScore(
+            new Point(870, 615),
+            this.gameState.getPlayerAt(0)
+        )
 
-        // Player 2
-        const playerTwoName = this.add.text(550, 725, this.players[1].name, {}) // Name
-        this.add.text(550, 750, '0', {
-            fontFamily: 'MightySoul',
-        }) // Score
-        this.add
-            .image(830, 700, 'kyo2')
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.updatePlayerName(playerTwoName, this.players[1])
-            })
+        this.renderPlayerNameAndScore(
+            new Point(982, 615),
+            this.gameState.getPlayerAt(1)
+        )
     }
 
     renderCityAndScore() {
-        this.add.image(512, 384, 'background')
         this.add.text(50, 50, 'Save the city - \nBe the hero', {
             fontFamily: 'MightySoul',
             fontSize: '50px',
@@ -109,39 +93,30 @@ export class Lobby extends Scene {
         const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
         const cityOrigin = new Point(-0.1, 0)
 
+        const backgroundPosition = new Point(512, 384)
         const scorePosition = new Point(100, 680)
 
-        switch (true) {
-            case percentage == 0:
-                this.add.image(scorePosition.x, scorePosition.y, 'life1')
-                this.add
-                    .image(0, 0, 'city1')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-            case percentage <= 33:
-                this.add.image(scorePosition.x, scorePosition.y, 'life2')
+        let number = 1 // Default == bad
 
-                this.add
-                    .image(0, 0, 'city2')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-
-            case percentage <= 66:
-                this.add.image(scorePosition.x, scorePosition.y, 'life3')
-
-                this.add
-                    .image(0, 0, 'city3')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
-
-            default:
-                this.add.image(scorePosition.x, scorePosition.y, 'life4')
-
-                this.add
-                    .image(0, 0, 'city4')
-                    .setOrigin(cityOrigin.x, cityOrigin.y)
-                break
+        if (percentage >= 33) {
+            number = 2
         }
+        if (percentage >= 66) {
+            number = 3
+        }
+        if (percentage >= 100) {
+            number = 4
+        }
+
+        this.add.image(
+            backgroundPosition.x,
+            backgroundPosition.y,
+            'city_background' + number
+        )
+        this.add.image(scorePosition.x, scorePosition.y, 'life' + number)
+        this.add
+            .image(0, 0, 'city' + number)
+            .setOrigin(cityOrigin.x, cityOrigin.y)
 
         // Total score
         this.add
@@ -160,7 +135,7 @@ export class Lobby extends Scene {
             .setOrigin(0.255, 0.5)
     }
 
-    updatePlayerName(playerName: Phaser.GameObjects.Text, player: Player) {
+    updatePlayerName(player: Player) {
         // Create a background overlay
         const overlay = this.add.rectangle(512, 400, 400, 400, 0x000000, 0.7)
         overlay.setInteractive()
@@ -203,8 +178,8 @@ export class Lobby extends Scene {
             .on('pointerdown', () => {
                 const userName = inputElement.value
                 if (userName.trim().length > 0) {
-                    playerName.text = userName
                     player.name = userName
+                    this.scene.restart()
                 }
 
                 // Cleanup popup elements
@@ -225,5 +200,36 @@ export class Lobby extends Scene {
         })
 
         this.scene.start('MinigameIntro')
+    }
+
+    renderPlayerNameAndScore(startPoint: Point, player: Player) {
+        this.add
+            .text(startPoint.x, startPoint.y, player.getScore().toString(), {
+                fontFamily: 'MightySoul',
+                color: '#ffffff',
+                fixedWidth: 30,
+                align: 'center',
+            })
+            .setOrigin(0.5, 0.5)
+        this.add.text(startPoint.x - 67, startPoint.y + 80, player.name, {
+            color: '#0165E4',
+            fontFamily: 'MightySoul',
+            fixedWidth: 68,
+            fontSize: '15px',
+            align: 'center',
+        }) // Name
+        this.add
+            .rectangle(
+                startPoint.x - 35,
+                startPoint.y + 46,
+                80,
+                100,
+                0x000000,
+                0
+            )
+            .setInteractive()
+            .on('pointerdown', () => {
+                this.updatePlayerName(player)
+            })
     }
 }
