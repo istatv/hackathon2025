@@ -83,11 +83,6 @@ export class Lobby extends Scene {
     }
 
     renderCityAndScore() {
-        this.add.text(50, 50, 'Save the city - \nBe the hero', {
-            fontFamily: 'MightySoul',
-            fontSize: '50px',
-            color: '#ABCFFB',
-        })
         const score = this.gameState.getTotalScore()
         const scoreGoal = this.gameState.getTotalScoreGoal()
         const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
@@ -108,13 +103,19 @@ export class Lobby extends Scene {
             number = 4
         }
 
-        this.sound.stopAll()
-        this.sound.play('lobby_main_' + number)
         this.add.image(
             backgroundPosition.x,
             backgroundPosition.y,
             'city_background' + number
         )
+        this.add.text(50, 50, 'Save the city - \nBe the hero', {
+            fontFamily: 'MightySoul',
+            fontSize: '50px',
+            color: '#ABCFFB',
+        })
+        this.sound.stopAll()
+        this.sound.play('lobby_main_' + number, { loop: true })
+
         this.add.image(scorePosition.x, scorePosition.y, 'life' + number)
         this.add
             .image(0, 0, 'city' + number)
@@ -199,9 +200,18 @@ export class Lobby extends Scene {
             title: game.title,
             tutorialText: game.tutorialText,
             sceneToStart: game.sceneName,
+            character1: game.character1,
+            character2: game.character2,
         })
 
-        this.scene.start('MinigameIntro')
+        this.cameras.main.fadeOut(800, 255, 255, 255)
+        this.cameras.main.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            (cam, effect) => {
+                this.scene.stop()
+                this.scene.start('MinigameIntro')
+            }
+        )
     }
 
     renderPlayerNameAndScore(startPoint: Point, player: Player) {

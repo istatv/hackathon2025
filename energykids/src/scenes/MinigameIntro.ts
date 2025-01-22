@@ -1,12 +1,9 @@
 import { Scene } from 'phaser'
 import { EnergykidsGamecontrol } from '../shared/EnergykidsGamecontrol.ts'
-import { Util } from '../shared/Util.ts'
-import Rectangle = Phaser.GameObjects.Rectangle
 import Text = Phaser.GameObjects.Text
 import Point = Phaser.Geom.Point
 
 interface Player {
-    shape: Rectangle
     title: Text
     subtitle: Text
     position: Point
@@ -24,48 +21,66 @@ export class MinigameIntro extends Scene {
 
     players: Player[] = []
 
+    gameTitle: Phaser.GameObjects.Text
+    gameDescription: Phaser.GameObjects.Text
+
     constructor() {
         super('MinigameIntro')
     }
 
     setupScene() {
+        this.sound.stopAll()
+
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)
 
-        this.background = this.add.image(512, 384, 'background')
-        this.background.setAlpha(0.5)
+        this.background = this.add.image(512, 384, 'pb_background')
 
-        // Add Title
-        this.add.text(0, 48, this.config.title, {
+        // Add Game Title
+        this.add.text(50, 50, 'Save the city - \nBe the hero', {
+            fontFamily: 'MightySoul',
+            fontSize: '50px',
+            color: '#ABCFFB',
+        })
+
+        // Add MiniGame Title
+        this.gameTitle = this.add.text(0, 150, this.config.title, {
             align: 'center',
-            fontSize: 32,
             fixedWidth: 1024,
+            fontSize: '48px',
+            color: '#00F077',
+            fontFamily: 'MightySoul',
         })
 
         // Add Description
-        this.add.text(
-            0,
-            +this.game.config.height / 2 - 250,
+        this.gameDescription = this.add.text(
+            100,
+            +this.game.config.height / 2 - 150,
             this.config.tutorialText,
             {
-                align: 'justify',
-                fontSize: 25,
+                align: 'center',
                 padding: {
                     left: 80,
                     right: 80,
                 },
                 wordWrap: {
-                    width: 900,
+                    width: 700,
                     useAdvancedWrap: false,
                 },
+                fontSize: '32px',
+                color: '#ABCFFB',
+                fontFamily: 'MightySoul',
             }
         )
+
+        this.cameras.main.fadeIn(500, 255, 255, 255)
     }
 
     renderPlayers() {
         const gameControl = EnergykidsGamecontrol.getInstance()
         const playerAmount = gameControl.getPlayers().length
         const division = +this.game.config.width / (playerAmount + 1)
+        this.players = []
 
         for (let i = 0; i < playerAmount; i++) {
             const position = new Point(
@@ -75,45 +90,44 @@ export class MinigameIntro extends Scene {
             const diameter = 100
             const button = i === 0 ? 'R' : 'SPACE'
 
-            const shape = this.add.ellipse(
-                position.x,
-                position.y,
-                diameter,
-                diameter,
-                Util.getColorFromString(gameControl.getPlayerAt(i).name)
-            )
-
-            const subtitle = this.add.text(
+            const title = this.add.text(
                 position.x - diameter - 50,
-                position.y + 60,
-                'Press ' + button + " when you're ready",
+                position.y - 20,
+                gameControl.getPlayerAt(i).name,
                 {
                     align: 'center',
                     fixedWidth: 300,
-                    color: 'darkblue',
+                    fontSize: '32px',
+                    color: '#ABCFFB',
+                    fontFamily: 'MightySoul',
                 }
             )
 
-            const title = this.add.text(
-                position.x - diameter / 2,
-                position.y - diameter / 2,
-                'P' + (i + 1),
+            const subtitle = this.add.text(
+                position.x - 70,
+                position.y + 20,
+                'Press ' + button + " when you're ready",
                 {
                     align: 'center',
-                    padding: {
-                        top: diameter / 2 - 15,
+                    fontSize: '24px',
+                    color: '#ABCFFB',
+                    fontFamily: 'MightySoul',
+                    wordWrap: {
+                        width: 310,
+                        useAdvancedWrap: false,
                     },
-                    fixedWidth: diameter,
-                    fontSize: 35,
-                    fixedHeight: diameter,
-                    color: 'darkblue',
-                    fontStyle: 'bold',
                 }
+            )
+
+            const characterKey = `character${i + 1}`
+            this.add.image(
+                position.x,
+                position.y - 100,
+                this.config[characterKey]
             )
 
             const player: Player = {
                 button,
-                shape,
                 position,
                 diameter,
                 title,
@@ -136,18 +150,28 @@ export class MinigameIntro extends Scene {
                     this.time.delayedCall(500, () => {
                         this.add.text(
                             0,
-                            +this.game.config.height / 2,
+                            +this.game.config.height / 2 - 100,
                             'Get Ready!',
                             {
                                 align: 'center',
                                 fixedWidth: 1024,
-                                fontSize: 45,
-                                color: 'white',
+                                fontSize: 70,
+                                color: '#00F077',
                                 fontStyle: 'bold',
+                                fontFamily: 'MightySoul',
                             }
                         )
-                        this.time.delayedCall(3000, () => {
-                            this.scene.start(this.config.sceneToStart)
+                        this.gameTitle.setVisible(false)
+                        this.gameDescription.setVisible(false)
+                        this.time.delayedCall(2000, () => {
+                            this.cameras.main.fadeOut(1000, 0, 0, 0)
+                            this.cameras.main.once(
+                                Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                                (cam, effect) => {
+                                    this.scene.stop()
+                                    this.scene.start(this.config.sceneToStart)
+                                }
+                            )
                         })
                     })
                 }
@@ -155,10 +179,33 @@ export class MinigameIntro extends Scene {
         }
     }
 
+    renderButtons() {
+        const restartButton = this.add
+            .image(950, 50, 'button_exit')
+            .setInteractive()
+            .on('pointerover', () => {
+                restartButton.setTexture('button_exit_hover')
+            })
+            .on('pointerout', () => {
+                restartButton.setTexture('button_exit')
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Lobby')
+            })
+        this.add
+            .text(950, 50, 'Exit', {
+                fontSize: '21px',
+                color: '#0165E4',
+                fontFamily: 'MightySoul',
+            })
+            .setOrigin(0.45, 1)
+    }
+
     create() {
         this.config = this.registry.get('sceneConfig')
         this.setupScene()
         this.renderPlayers()
         this.waitUntilReady()
+        this.renderButtons()
     }
 }

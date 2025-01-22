@@ -8,17 +8,17 @@ export class PushButtonGame extends Phaser.Scene {
     public static readonly IDENTIFIER: string = 'PushButtonGame'
     camera: Phaser.Cameras.Scene2D.Camera
     background: Phaser.GameObjects.Image
-    msg_text: Phaser.GameObjects.Text
     time_step_player1: Phaser.Core.TimeStep
     time_step_player2: Phaser.Core.TimeStep
 
-    gamecontrol = EnergykidsGamecontrol.getInstance()
+    private gameState = EnergykidsGamecontrol.getInstance()
     private playerOne: Player
     private playerTwo: Player
+    private bulb_overlay: Image
 
-    private static AMOUNT_TO_INCREASE = 150
+    private static AMOUNT_TO_INCREASE = 80
     private static MAX_WIDTH = 800
-    private static REDUCTION_SPEED = 0.25
+    private static REDUCTION_SPEED = 0.35
 
     private gameIsOver = true
 
@@ -31,17 +31,19 @@ export class PushButtonGame extends Phaser.Scene {
     private rectangle_player1: Phaser.GameObjects.Rectangle
     private rectangle_player2: Phaser.GameObjects.Rectangle
 
+    private playerState = [false, false]
+
     constructor() {
         super(PushButtonGame.IDENTIFIER)
-        this.playerOne = this.gamecontrol.getPlayerAt(0)
-        this.playerTwo = this.gamecontrol.getPlayerAt(1)
+        this.playerOne = this.gameState.getPlayerAt(0)
+        this.playerTwo = this.gameState.getPlayerAt(1)
     }
 
     renderBackground() {
-        this.add.image(0, 0, 'pb_background').setScale(0.5)
+        this.add.image(512, 384, 'pb_background')
     }
 
-    renderText() {
+    renderCountdown() {
         this.countdown = 5
         this.countdownTimer = this.time.addEvent({
             delay: 1000,
@@ -49,21 +51,6 @@ export class PushButtonGame extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         })
-        this.add
-            .text(
-                50,
-                50,
-                this.playerOne.name + ', press [ SPACE ] repeatedly to win!',
-                {}
-            )
-            .setOrigin(0, 0.5)
-
-        this.add.text(
-            50,
-            150,
-            this.playerTwo.name + ', press [ CTRL ] repeatedly to win!',
-            {}
-        )
 
         this.countdownText = this.add.text(
             +this.game.config.width / 2 - 100,
@@ -78,8 +65,8 @@ export class PushButtonGame extends Phaser.Scene {
     }
 
     renderPlayers() {
-        this.playerOneImage = this.add.image(350, 640, 'pb_kyo1_1')
-        this.playerTwoImage = this.add.image(690, 640, 'pb_kyo2_1')
+        this.playerOneImage = this.add.image(320, 640, 'pb_kyo1_1')
+        this.playerTwoImage = this.add.image(710, 640, 'pb_kyo2_1')
 
         this.rectangle_player1 = this.add.rectangle(100, 100, 0, 50, 0xff7448)
         this.rectangle_player2 = this.add.rectangle(100, 200, 0, 50, 0xff7335)
@@ -98,19 +85,11 @@ export class PushButtonGame extends Phaser.Scene {
         )
 
         this.input.keyboard?.on('keyup-SPACE', () => {
-            this.buttonPush(
-                this.rectangle_player1,
-                this.playerOne,
-                this.gameIsOver
-            )
+            this.buttonPush(this.rectangle_player1, 0, this.gameIsOver)
         })
 
         this.input.keyboard?.on('keyup-CTRL', () => {
-            this.buttonPush(
-                this.rectangle_player2,
-                this.playerTwo,
-                this.gameIsOver
-            )
+            this.buttonPush(this.rectangle_player2, 1, this.gameIsOver)
         })
     }
 
@@ -118,8 +97,7 @@ export class PushButtonGame extends Phaser.Scene {
         this.camera = this.cameras.main
 
         this.renderBackground()
-        this.renderText()
-        this.renderPlayers()
+        this.renderCountdown()
     }
 
     reduceBar(delta, rectangle: Rectangle) {
@@ -129,12 +107,30 @@ export class PushButtonGame extends Phaser.Scene {
         }
     }
 
-    buttonPush(rectangle: Rectangle, player: Player, gameIsOver = false) {
+    buttonPush(rectangle: Rectangle, playerIndex: number, gameIsOver = false) {
         if (!gameIsOver) {
             if (rectangle.width < PushButtonGame.MAX_WIDTH) {
                 rectangle.width += PushButtonGame.AMOUNT_TO_INCREASE
+                this.playerState[playerIndex] = !this.playerState[playerIndex]
+                const imageNum = this.playerState[playerIndex] ? '1' : '2'
+                if (playerIndex === 0) {
+                    this.playerOneImage
+                        .setTexture('pb_kyo1_' + imageNum)
+                        .setScale(
+                            1 + rectangle.width / PushButtonGame.MAX_WIDTH
+                        )
+                        .setAngle(imageNum === '1' ? -3 : 3)
+                } else {
+                    this.playerTwoImage
+                        .setTexture('pb_kyo2_' + imageNum)
+
+                        .setScale(
+                            1 + rectangle.width / PushButtonGame.MAX_WIDTH
+                        )
+                        .setAngle(imageNum === '1' ? -3 : 3)
+                }
             } else {
-                this.gameWon(player)
+                this.gameWon(this.gameState.getPlayerAt(playerIndex))
             }
         }
     }
@@ -168,7 +164,6 @@ export class PushButtonGame extends Phaser.Scene {
 
     updateCountdown() {
         this.countdown--
-
         this.countdownText.setText(this.countdown.toString())
 
         if (this.countdown <= 0) {
@@ -177,7 +172,39 @@ export class PushButtonGame extends Phaser.Scene {
                 this.countdownTimer.remove()
                 this.countdownText.destroy()
                 this.gameIsOver = false
+                this.renderPlayers()
+                this.renderBulb()
             }
+        }
+    }
+
+    renderBulb() {
+        const width = +this.game.config.width / 2
+        const height = +this.game.config.height / 2
+        this.add.image(width, height, 'pb_bulb_off').setOrigin(0.5, 0.65)
+        this.bulb_overlay = this.add
+            .image(width, height, 'pb_bulb_on')
+            .setOrigin(0.5, 0.65)
+            .setAlpha(0)
+    }
+
+    update(time: number, delta: number) {
+        super.update(time, delta)
+
+        if (this.countdown < 0) {
+            // Reduce size of player if they are not paddling
+            const playerOneScale =
+                1 + this.rectangle_player1.width / PushButtonGame.MAX_WIDTH
+            const playerTwoScale =
+                1 + this.rectangle_player2.width / PushButtonGame.MAX_WIDTH
+            this.playerOneImage.setScale(playerOneScale)
+            this.playerTwoImage.setScale(playerTwoScale)
+            const overAllProgress =
+                (this.rectangle_player1.width + this.rectangle_player2.width) /
+                    (PushButtonGame.MAX_WIDTH * 2) -
+                0.02
+
+            this.bulb_overlay.setAlpha(overAllProgress)
         }
     }
 }
