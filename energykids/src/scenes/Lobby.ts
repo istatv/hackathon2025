@@ -200,6 +200,8 @@ export class Lobby extends Scene {
             title: game.title,
             tutorialText: game.tutorialText,
             sceneToStart: game.sceneName,
+            character1: game.character1,
+            character2: game.character2,
         })
 
         this.cameras.main.fadeOut(800, 255, 255, 255)
