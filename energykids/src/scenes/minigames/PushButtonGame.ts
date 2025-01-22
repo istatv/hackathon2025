@@ -43,14 +43,7 @@ export class PushButtonGame extends Phaser.Scene {
         this.add.image(512, 384, 'pb_background')
     }
 
-    computePaddlesFloat(image: any) {
-        let angle = ((this.tick + image.tOff) * 0.00051) % 360
-        let diff = 10 * Math.sin(angle * (180 / Math.PI))
-        let dy = image.oY + diff
-        image.__proto__.setY(dy)
-    }
-
-    renderText() {
+    renderCountdown() {
         this.countdown = 5
         this.countdownTimer = this.time.addEvent({
             delay: 1000,
@@ -58,21 +51,6 @@ export class PushButtonGame extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         })
-        this.add
-            .text(
-                50,
-                50,
-                this.playerOne.name + ', press [ SPACE ] repeatedly to win!',
-                {}
-            )
-            .setOrigin(0, 0.5)
-
-        this.add.text(
-            50,
-            150,
-            this.playerTwo.name + ', press [ CTRL ] repeatedly to win!',
-            {}
-        )
 
         this.countdownText = this.add.text(
             +this.game.config.width / 2 - 100,
@@ -119,9 +97,7 @@ export class PushButtonGame extends Phaser.Scene {
         this.camera = this.cameras.main
 
         this.renderBackground()
-        this.renderText()
-        this.renderPlayers()
-        this.renderBulb()
+        this.renderCountdown()
     }
 
     reduceBar(delta, rectangle: Rectangle) {
@@ -188,7 +164,6 @@ export class PushButtonGame extends Phaser.Scene {
 
     updateCountdown() {
         this.countdown--
-
         this.countdownText.setText(this.countdown.toString())
 
         if (this.countdown <= 0) {
@@ -197,6 +172,8 @@ export class PushButtonGame extends Phaser.Scene {
                 this.countdownTimer.remove()
                 this.countdownText.destroy()
                 this.gameIsOver = false
+                this.renderPlayers()
+                this.renderBulb()
             }
         }
     }
@@ -214,18 +191,20 @@ export class PushButtonGame extends Phaser.Scene {
     update(time: number, delta: number) {
         super.update(time, delta)
 
-        // Reduce size of player if they are not paddling
-        const playerOneScale =
-            1 + this.rectangle_player1.width / PushButtonGame.MAX_WIDTH
-        const playerTwoScale =
-            1 + this.rectangle_player2.width / PushButtonGame.MAX_WIDTH
-        this.playerOneImage.setScale(playerOneScale)
-        this.playerTwoImage.setScale(playerTwoScale)
-        const overAllProgress =
-            (this.rectangle_player1.width + this.rectangle_player2.width) /
-                (PushButtonGame.MAX_WIDTH * 2) -
-            0.02
+        if (this.countdown < 0) {
+            // Reduce size of player if they are not paddling
+            const playerOneScale =
+                1 + this.rectangle_player1.width / PushButtonGame.MAX_WIDTH
+            const playerTwoScale =
+                1 + this.rectangle_player2.width / PushButtonGame.MAX_WIDTH
+            this.playerOneImage.setScale(playerOneScale)
+            this.playerTwoImage.setScale(playerTwoScale)
+            const overAllProgress =
+                (this.rectangle_player1.width + this.rectangle_player2.width) /
+                    (PushButtonGame.MAX_WIDTH * 2) -
+                0.02
 
-        this.bulb_overlay.setAlpha(overAllProgress)
+            this.bulb_overlay.setAlpha(overAllProgress)
+        }
     }
 }
