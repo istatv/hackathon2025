@@ -17,8 +17,8 @@ export class Lobby extends Scene {
 
     create() {
         this.players = this.gameState.getPlayers()
-        this.renderCity()
-        this.renderScores()
+        this.renderCityAndScore()
+        this.renderPlayerScores()
         this.renderButtons()
     }
 
@@ -61,27 +61,17 @@ export class Lobby extends Scene {
                 this.players[0].addScore(50)
                 this.scene.restart()
             })
+
         this.add
             .text(950, 50, 'Restart', {
                 fontSize: '21px',
-                color: '#000000',
+                color: '#0165E4',
                 fontFamily: 'MightySoul',
             })
-            .setOrigin(0.5)
+            .setOrigin(0.45, 0.85)
     }
 
-    renderScores() {
-        this.add.rectangle(100, 700, 100, 50, 0x0000ff)
-
-        // Total score
-        this.add
-            .text(100, 700, this.gameState.getTotalScore().toString(), {
-                fontSize: '24px',
-                color: '#ffffff',
-                fontFamily: 'MightySoul',
-            })
-            .setOrigin(0.5)
-
+    renderPlayerScores() {
         // Player 1
         const playerOneName = this.add.text(350, 725, this.players[0].name, {}) // Name
         this.add.text(350, 750, '0', {
@@ -107,7 +97,7 @@ export class Lobby extends Scene {
             })
     }
 
-    renderCity() {
+    renderCityAndScore() {
         this.add.image(512, 384, 'background')
         this.add.text(50, 50, 'Save the city - \nBe the hero', {
             fontFamily: 'MightySoul',
@@ -118,24 +108,56 @@ export class Lobby extends Scene {
         const scoreGoal = this.gameState.getTotalScoreGoal()
         const percentage = score > 0 ? Math.floor((score / scoreGoal) * 100) : 0
         const cityOrigin = new Point(-0.1, 0)
+
+        const scorePosition = new Point(100, 680)
+
         switch (true) {
             case percentage == 0:
-                return this.add
+                this.add.image(scorePosition.x, scorePosition.y, 'life1')
+                this.add
                     .image(0, 0, 'city1')
                     .setOrigin(cityOrigin.x, cityOrigin.y)
+                break
             case percentage <= 33:
-                return this.add
+                this.add.image(scorePosition.x, scorePosition.y, 'life2')
+
+                this.add
                     .image(0, 0, 'city2')
                     .setOrigin(cityOrigin.x, cityOrigin.y)
+                break
+
             case percentage <= 66:
-                return this.add
+                this.add.image(scorePosition.x, scorePosition.y, 'life3')
+
+                this.add
                     .image(0, 0, 'city3')
                     .setOrigin(cityOrigin.x, cityOrigin.y)
+                break
+
             default:
-                return this.add
+                this.add.image(scorePosition.x, scorePosition.y, 'life4')
+
+                this.add
                     .image(0, 0, 'city4')
                     .setOrigin(cityOrigin.x, cityOrigin.y)
+                break
         }
+
+        // Total score
+        this.add
+            .text(
+                scorePosition.x,
+                scorePosition.y,
+                this.gameState.getTotalScore().toString(),
+                {
+                    fixedWidth: 150,
+                    align: 'center',
+                    fontSize: '24px',
+                    color: '#0165E4',
+                    fontFamily: 'MightySoul',
+                }
+            )
+            .setOrigin(0.255, 0.5)
     }
 
     updatePlayerName(playerName: Phaser.GameObjects.Text, player: Player) {
