@@ -44,11 +44,11 @@ export class PushButtonGame extends Phaser.Scene {
         this.add.image(512, 384, 'pb_background')
     }
 
-    computePaddlesFloat(paddle: any) {
-        let angle = ((this.tick + paddle.tOff) * 0.00051) % 360
+    computePaddlesFloat(image: any) {
+        let angle = ((this.tick + image.tOff) * 0.00051) % 360
         let diff = 10 * Math.sin(angle * (180 / Math.PI))
-        let dy = paddle.oY + diff
-        paddle.__proto__.setY(dy)
+        let dy = image.oY + diff
+        image.__proto__.setY(dy)
     }
 
     renderText() {
@@ -138,9 +138,18 @@ export class PushButtonGame extends Phaser.Scene {
                 this.playerState[playerIndex] = !this.playerState[playerIndex]
                 const imageNum = this.playerState[playerIndex] ? '1' : '2'
                 if (playerIndex === 0) {
-                    this.playerOneImage.setTexture('pb_kyo1_' + imageNum)
+                    this.playerOneImage
+                        .setTexture('pb_kyo1_' + imageNum)
+                        .setScale(
+                            1 + rectangle.width / PushButtonGame.MAX_WIDTH
+                        )
                 } else {
-                    this.playerTwoImage.setTexture('pb_kyo2_' + imageNum)
+                    this.playerTwoImage
+                        .setTexture('pb_kyo2_' + imageNum)
+
+                        .setScale(
+                            1 + rectangle.width / PushButtonGame.MAX_WIDTH
+                        )
                 }
             } else {
                 this.gameWon(this.gameState.getPlayerAt(playerIndex))
@@ -194,6 +203,12 @@ export class PushButtonGame extends Phaser.Scene {
         super.update(time, delta)
         this.tick = (this.tick + 1) % Number.MAX_VALUE
 
-        //this.computePaddlesFloat(this.playerOneImage)
+        // Reduce size of player if they are not paddling
+        this.playerOneImage.setScale(
+            1 + this.rectangle_player1.width / PushButtonGame.MAX_WIDTH
+        )
+        this.playerTwoImage.setScale(
+            1 + this.rectangle_player2.width / PushButtonGame.MAX_WIDTH
+        )
     }
 }
