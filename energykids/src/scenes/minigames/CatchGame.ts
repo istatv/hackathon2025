@@ -4,6 +4,8 @@ import SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE
 import TimeStep = Phaser.Core.TimeStep
 import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol'
 
+const MAIN_FONT = "MightySoul";
+const TOTAL_BALLS = 5;
 export class CatchGame extends Phaser.Scene {
     public static readonly IDENTIFIER: string = 'CatchGame'
 
@@ -58,11 +60,13 @@ export class CatchGame extends Phaser.Scene {
     create() {
         this.ballPool = []
         this.outroGroup = []
-        this.countdown = 5;
+        this.countdown = 30;
         this.playerOneScore = 0;
         this.playerTwoScore = 0;
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0xaaaaaa)
+
+        this.add.image(0, 0, 'pb_background').setScale(0.5)
 
         // if (this.countdown <= -1) {
         //     this.countdownTimer.remove()
@@ -70,29 +74,29 @@ export class CatchGame extends Phaser.Scene {
         //     this.gameIsOver = false
         // }
 
-        this.initBallPool()
-        this.addPlayers()
-        this.addScoreAndTimer()
-        this.addBalls()
-        this.addIntroOverlay()
-        // this.overlayGroup = [];
-        // this.addOutroOverlay()
-        this.initBindings()
+        this.initBallPool();
+        this.addPlayers();
+        this.addSlogan();
+        this.addTimerText();
+        this.addScoreText();
+        this.addBalls();
+        this.addIntroOverlay();
+        this.initBindings();
     }
 
     initBallPool() {
-        const totalBalls = 5
+        const totalBalls = TOTAL_BALLS;
         for (let idx = 0; idx < totalBalls; idx++) {
             this.ballPool.push(this.createBall(idx));
         }
     }
 
-    createBall(idx: Number) {
+    createBall(idx: Number, withSprite: boolean = true) {
         const { width, height } = this.game.config;
         const rdx = Math.floor(Date.now() * Math.random()) %  this.ballTypes.length;
         const bt = this.ballTypes[rdx];
 
-        return {
+        let b = {
             id: idx,
             color: bt.color,
             effect: bt.effect,
@@ -102,13 +106,40 @@ export class CatchGame extends Phaser.Scene {
             velY: (Math.random() * 3 + 2) * 0.000001,
             r: 15,
         }
+
+        if(withSprite) {
+            b = this.attachSpriteToBall(b); 
+        }
+
+        return b;
+    }
+
+    attachSpriteToBall(ball) {
+        let sprite = [
+            { color: 0xffff00, asset: 'cg_drop_water'},
+            { color: 0x00ff00, asset: 'cg_drop_sun'},
+            { color: 0xff0000, asset: 'cg_drop_stone'},
+        ].filter((s) => s.color == ball.color).pop();
+
+        ball.sprite = this.add.image(ball.currX, ball.currX, sprite.asset);
+
+        return ball;
     }
 
     updateBall(ball) {
         const tmp = this.createBall(ball.id);
+
+        if(ball.sprite) {
+            // console.log('destro');
+            ball.sprite.destroy();
+            ball.sprite = undefined;
+        }
+
         Object.keys(tmp).forEach((k) => {
             ball[k] = tmp[k];
         });
+
+
         return ball;
     }
 
@@ -122,9 +153,9 @@ export class CatchGame extends Phaser.Scene {
         const { height } = this.game.config
         let dy = height * 0.5
 
-        for (const ball of this.ballPool) {
-            ball.sprite = this.add.circle(ball.currX, dy, ball.r, ball.color)
-        }
+        // for (const ball of this.ballPool) {
+            // ball.sprite = this.add.circle(ball.currX, dy, ball.r, ball.color)
+        // }
     }
 
     addPlayers() {
@@ -133,7 +164,6 @@ export class CatchGame extends Phaser.Scene {
         const hha = height * 0.5
         const size = 150
         let oy = height - size * 0.75 + Math.random() * 5 - 5
-
         this.paddleOne = {
             tOff: Math.round(Math.random() * Date.now()),
             oY: oy,
@@ -147,15 +177,7 @@ export class CatchGame extends Phaser.Scene {
                 Phaser.Input.Keyboard.KeyCodes.D
             ),
         }
-        this.paddleOne.__proto__ = this.add.rectangle(
-            wha - 200,
-            oy,
-            size,
-            size,
-            0xFFA500,
-            0x555555
-        )
-        
+        this.paddleOne.__proto__ = this.add.image(wha - 200, oy, 'cg_basket_orange');
 
         oy = height - size * 0.75 + Math.random() * 5 - 5
         this.paddleTwo = {
@@ -170,14 +192,7 @@ export class CatchGame extends Phaser.Scene {
                 Phaser.Input.Keyboard.KeyCodes.L
             ),
         }
-        this.paddleTwo.__proto__ = this.add.rectangle(
-            wha + 200,
-            oy,
-            size,
-            size,
-            0x0000ff,
-            0x555555
-        )
+        this.paddleTwo.__proto__ = this.add.image(wha - 200, oy, 'cg_basket_blue');
     }
 
     addIntroOverlay() {
@@ -197,13 +212,16 @@ export class CatchGame extends Phaser.Scene {
             align: 'center',
             fontSize: '30px',
             wordWrap: { width: 600 },
+            fontFamily: MAIN_FONT,
         }
         const creditsTextStyle = {
             align: 'center',
             fontSize: '30px',
             wordWrap: { width: 150 },
+            fontFamily: MAIN_FONT,
         }
-
+        // let dropWater = ;
+        // dropWater.scale(0.5);
         this.overlayGroup = this.overlayGroup.concat([
             this.add.rectangle(x, y, w, h, 0xffffff, 0x555555),
             this.add.text(
@@ -219,29 +237,30 @@ export class CatchGame extends Phaser.Scene {
                 controlsTextStyle
             ),
 
-            this.add.circle(w - 420, h - 120, 20, this.ballTypes[0].color),
-            this.add.circle(w - 220, h - 120, 20, this.ballTypes[1].color),
-            this.add.circle(w - 10, h - 120, 20, this.ballTypes[2].color),
+            this.add.image(w - 420, h - 120, 'cg_drop_water'),
+            this.add.image(w - 220, h - 120, 'cg_drop_sun'),
+            this.add.image(w - 10, h - 120, 'cg_drop_stone'),
+
             this.add.text(
-                cw * 0.5 - 250,
+                cw * 0.5 - 240,
                 ch * 0.5 + 20,
                 this.ballTypes[0].effect + ' pkt.',
                 creditsTextStyle
             ),
             this.add.text(
-                cw * 0.5 - 70,
+                cw * 0.5 - 50,
                 ch * 0.5 + 20,
                 this.ballTypes[1].effect + ' pkt.',
                 creditsTextStyle
             ),
             this.add.text(
-                cw * 0.5 + 140,
+                cw * 0.5 + 155,
                 ch * 0.5 + 20,
                 this.ballTypes[2].effect + ' pkt.',
                 creditsTextStyle
             ),
             this.add.text(
-                cw * 0.5 - 200,
+                cw * 0.5 - 150,
                 ch * 0.5 + 140,
                 '[press space to start]',
                 controlsTextStyle
@@ -331,7 +350,74 @@ export class CatchGame extends Phaser.Scene {
         // this.overlayGroup[0].contains
     }
 
-    addScoreAndTimer() {
+    addSlogan() {
+        const cw = this.game.config.width
+        const ch = this.game.config.height
+        let m = 5
+        let x = cw * 0.5
+        let y = ch * 0.5
+        x = cw * 0.5
+        y = ch * 0.5
+        let w = 1024 - m * 60
+        let h = 768 - m * 60
+
+        const playerTextStyle = {
+            align: 'left',
+            fontSize: '28px',
+            wordWrap: { width: 250 },
+            fontFamily: MAIN_FONT,
+        }
+
+        this.playerOneText = this.add.text(
+            20,
+            20,
+            "Save the City - \nBe a Hero",
+            playerTextStyle
+        );
+
+        this.playerOneText = this.add.text(
+            20,
+            100,
+            "Catching Energy",
+            playerTextStyle
+        );
+
+    }
+
+    addTimerText() {
+        const cw = this.game.config.width
+        const ch = this.game.config.height
+        let m = 5
+        let x = cw * 0.5
+        let y = ch * 0.5
+        x = cw * 0.5
+        y = ch * 0.5
+        let w = 1024 - m * 60
+        let h = 768 - m * 60
+
+        this.countdownText = this.add.text(
+            cw * 0.5 - 20,
+            20,
+            this.getCurrentCountdownFormated(),
+            {
+                align: 'center',
+                fontSize: '40px',
+                // wordWrap: { width: 600 },
+                fontFamily: MAIN_FONT,
+            });
+            this.add.text(
+                cw * 0.5 - 40,
+                60,
+                "seconds left",
+                {
+                    align: 'center',
+                    fontSize: '20px',
+                    // wordWrap: { width: 600 },
+                    fontFamily: MAIN_FONT,
+                });    
+    }
+
+    addScoreText() {
         const cw = this.game.config.width
         const ch = this.game.config.height
         let m = 5
@@ -344,39 +430,30 @@ export class CatchGame extends Phaser.Scene {
 
         const playerTextStyle = {
             align: 'center',
-            fontSize: '15px',
-            wordWrap: { width: 250 },
+            fontSize: '18px',
+            wordWrap: {
+                width: 250,
+                fontFamily: MAIN_FONT,
+            },
         }
 
-        // this.overlayGroup = this.overlayGroup.concat([
         this.playerOneText = this.add.text(
-            20,
-            20,
+            this.paddleOne.currX - 150,
+            ch - 45,
             this.getFormatedScoreText(this.playerOne, this.playerOneScore),
             playerTextStyle
         );
 
         this.playerTwoText = this.add.text(
-            20,
-            50,
+            this.paddleTwo.currX,
+            ch - 45,
             this.getFormatedScoreText(this.playerTwo, this.playerTwoScore),
             playerTextStyle
         );
-
-        this.countdownText = this.add.text(
-            20,
-            80,
-            this.getCurrentCountdownFormated(),
-            {
-                align: 'center',
-                fontSize: '30px',
-                wordWrap: { width: 600 },
-            });
-
     }
 
     getCurrentCountdownFormated() {
-        return this.countdown + "s";
+        return this.countdown;
     }
 
     getFormatedScoreText(player, score) {
