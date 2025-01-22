@@ -7,8 +7,16 @@ export const loadPushButtonAssets = (load: LoaderPlugin) => {
         { key: 'pb_kyo1_2', url: 'pushbutton/Kyo_blue_Bike_B.svg' },
         { key: 'pb_kyo2_1', url: 'pushbutton/Kyo_yellow_Bike_A.svg' },
         { key: 'pb_kyo2_2', url: 'pushbutton/Kyo_yellow_Bike_B.svg' },
-        { key: 'pb_bulb_on', url: 'pushbutton/light_bulb_on.svg' },
-        { key: 'pb_bulb_off', url: 'pushbutton/light_bulb_off.svg' },
+        {
+            key: 'pb_bulb_on',
+            url: 'pushbutton/light_bulb_on.svg',
+            svgConfig: { scale: 1.1 },
+        },
+        {
+            key: 'pb_bulb_off',
+            url: 'pushbutton/light_bulb_off.svg',
+            svgConfig: { scale: 1.1 },
+        },
         {
             key: 'pb_text_awesome',
             url: 'pushbutton/finalScore_Expression_Awesome.svg',

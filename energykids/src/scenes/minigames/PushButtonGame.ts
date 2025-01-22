@@ -14,12 +14,11 @@ export class PushButtonGame extends Phaser.Scene {
     private gameState = EnergykidsGamecontrol.getInstance()
     private playerOne: Player
     private playerTwo: Player
+    private bulb_overlay: Image
 
-    private static AMOUNT_TO_INCREASE = 150
+    private static AMOUNT_TO_INCREASE = 80
     private static MAX_WIDTH = 800
     private static REDUCTION_SPEED = 0.35
-
-    private tick: number = 0
 
     private gameIsOver = true
 
@@ -88,8 +87,8 @@ export class PushButtonGame extends Phaser.Scene {
     }
 
     renderPlayers() {
-        this.playerOneImage = this.add.image(350, 640, 'pb_kyo1_1')
-        this.playerTwoImage = this.add.image(690, 640, 'pb_kyo2_1')
+        this.playerOneImage = this.add.image(320, 640, 'pb_kyo1_1')
+        this.playerTwoImage = this.add.image(710, 640, 'pb_kyo2_1')
 
         this.rectangle_player1 = this.add.rectangle(100, 100, 0, 50, 0xff7448)
         this.rectangle_player2 = this.add.rectangle(100, 200, 0, 50, 0xff7335)
@@ -122,6 +121,7 @@ export class PushButtonGame extends Phaser.Scene {
         this.renderBackground()
         this.renderText()
         this.renderPlayers()
+        this.renderBulb()
     }
 
     reduceBar(delta, rectangle: Rectangle) {
@@ -143,6 +143,7 @@ export class PushButtonGame extends Phaser.Scene {
                         .setScale(
                             1 + rectangle.width / PushButtonGame.MAX_WIDTH
                         )
+                        .setAngle(imageNum === '1' ? -3 : 3)
                 } else {
                     this.playerTwoImage
                         .setTexture('pb_kyo2_' + imageNum)
@@ -150,6 +151,7 @@ export class PushButtonGame extends Phaser.Scene {
                         .setScale(
                             1 + rectangle.width / PushButtonGame.MAX_WIDTH
                         )
+                        .setAngle(imageNum === '1' ? -3 : 3)
                 }
             } else {
                 this.gameWon(this.gameState.getPlayerAt(playerIndex))
@@ -199,16 +201,31 @@ export class PushButtonGame extends Phaser.Scene {
         }
     }
 
+    renderBulb() {
+        const width = +this.game.config.width / 2
+        const height = +this.game.config.height / 2
+        this.add.image(width, height, 'pb_bulb_off').setOrigin(0.5, 0.65)
+        this.bulb_overlay = this.add
+            .image(width, height, 'pb_bulb_on')
+            .setOrigin(0.5, 0.65)
+            .setAlpha(0)
+    }
+
     update(time: number, delta: number) {
         super.update(time, delta)
-        this.tick = (this.tick + 1) % Number.MAX_VALUE
 
         // Reduce size of player if they are not paddling
-        this.playerOneImage.setScale(
+        const playerOneScale =
             1 + this.rectangle_player1.width / PushButtonGame.MAX_WIDTH
-        )
-        this.playerTwoImage.setScale(
+        const playerTwoScale =
             1 + this.rectangle_player2.width / PushButtonGame.MAX_WIDTH
-        )
+        this.playerOneImage.setScale(playerOneScale)
+        this.playerTwoImage.setScale(playerTwoScale)
+        const overAllProgress =
+            (this.rectangle_player1.width + this.rectangle_player2.width) /
+                (PushButtonGame.MAX_WIDTH * 2) -
+            0.02
+
+        this.bulb_overlay.setAlpha(overAllProgress)
     }
 }
