@@ -202,7 +202,14 @@ export class Lobby extends Scene {
             sceneToStart: game.sceneName,
         })
 
-        this.scene.start('MinigameIntro')
+        this.cameras.main.fadeOut(800, 255, 255, 255)
+        this.cameras.main.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            (cam, effect) => {
+                this.scene.stop()
+                this.scene.start('MinigameIntro')
+            }
+        )
     }
 
     renderPlayerNameAndScore(startPoint: Point, player: Player) {
