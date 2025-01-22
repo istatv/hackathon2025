@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 268.95 114.71">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Unbenannter_Verlauf_13);
+        opacity: .61;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #d6e8fd;
+      }
+
+      .cls-3 {
+        fill: #023276;
+      }
+
+      .cls-4 {
+        fill: #0058c6;
+      }
+    </style>
+    <radialGradient id="Unbenannter_Verlauf_13" data-name="Unbenannter Verlauf 13" cx="133.15" cy="25.68" fx="133.15" fy="25.68" r="65.41" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#aeddff" stop-opacity=".3"/>
+      <stop offset=".34" stop-color="#7ec3f7" stop-opacity=".34"/>
+      <stop offset=".7" stop-color="#3a9eed" stop-opacity=".4"/>
+      <stop offset=".97" stop-color="#266ee0" stop-opacity=".5"/>
+    </radialGradient>
+  </defs>
+  <path class="cls-3" d="M33.45,88.3c.16.2,4.55,6.36,4.79,6.56,8.74,6.91,189.89,9.6,195.94,4.01,6.12-5.65,7.72-65.93,2.32-74.1-.09-.13-4.35-6.22-4.44-6.33-5.71-6.56-186.1-1.63-193.15,4.13-7.05,5.76-11.52,58.39-5.46,65.73Z"/>
+  <path class="cls-4" d="M33.45,88.3c6.06,7.34,190.34,10.34,196.55,4.6,6.22-5.74,7.77-67.9,2.06-74.46-5.71-6.56-190.28-7.6-197.33-1.84-7.05,5.76-7.35,64.36-1.28,71.7Z"/>
+  <path class="cls-2" d="M223.57,25.54c-4.84-5.93-175.06-8.03-180.09-3.44-5.03,4.59-6.55,54.57-1.98,59.88,4.57,5.3,175.02,5.83,180.72,1.23,5.69-4.6,6.19-51.73,1.35-57.66Z"/>
+  <path class="cls-1" d="M42.3,27.28c5.23-4.59,177.26-2.84,182.3,3.09.3.36.58.86.85,1.5-.53-3.23-1.22-5.62-2.09-6.68-4.84-5.93-174.85-7.68-179.87-3.09-1.03.94-1.92,3.81-2.63,7.81.45-1.27.93-2.18,1.45-2.63Z"/>
+</svg>

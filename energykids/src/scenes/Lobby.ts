@@ -66,7 +66,7 @@ export class Lobby extends Scene {
         const playerOneName = this.add.text(350, 725, this.players[0].name, {}) // Name
         this.add.text(350, 750, '0', {}) // Score
         this.add
-            .rectangle(950, 700, 100, 100, 0x0000ff)
+            .image(950, 700, 'kyo1')
             .setInteractive()
             .on('pointerdown', () => {
                 this.updatePlayerName(playerOneName, this.players[0])
@@ -76,7 +76,7 @@ export class Lobby extends Scene {
         const playerTwoName = this.add.text(550, 725, this.players[1].name, {}) // Name
         this.add.text(550, 750, '0', {}) // Score
         this.add
-            .rectangle(830, 700, 100, 100, 0x0000ff)
+            .image(830, 700, 'kyo2')
             .setInteractive()
             .on('pointerdown', () => {
                 this.updatePlayerName(playerTwoName, this.players[1])
@@ -128,8 +128,10 @@ export class Lobby extends Scene {
             .setInteractive()
             .on('pointerdown', () => {
                 const userName = inputElement.value
-                playerName.text = userName
-                player.name = userName
+                if (userName.trim().length > 0) {
+                    playerName.text = userName
+                    player.name = userName
+                }
 
                 // Cleanup popup elements
                 overlay.destroy()
