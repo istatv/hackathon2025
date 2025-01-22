@@ -211,10 +211,6 @@ export class Lobby extends Scene {
                 align: 'center',
             })
             .setOrigin(0.5, 0.5)
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.updatePlayerName(player)
-            })
         this.add.text(startPoint.x - 67, startPoint.y + 80, player.name, {
             color: '#0165E4',
             fontFamily: 'MightySoul',
@@ -222,5 +218,18 @@ export class Lobby extends Scene {
             fontSize: '15px',
             align: 'center',
         }) // Name
+        this.add
+            .rectangle(
+                startPoint.x - 35,
+                startPoint.y + 46,
+                80,
+                100,
+                0x000000,
+                0
+            )
+            .setInteractive()
+            .on('pointerdown', () => {
+                this.updatePlayerName(player)
+            })
     }
 }
