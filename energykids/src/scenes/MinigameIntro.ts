@@ -21,6 +21,9 @@ export class MinigameIntro extends Scene {
 
     players: Player[] = []
 
+    gameTitle: Phaser.GameObjects.Text
+    gameDescription: Phaser.GameObjects.Text
+
     constructor() {
         super('MinigameIntro')
     }
@@ -31,11 +34,17 @@ export class MinigameIntro extends Scene {
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)
 
-        this.background = this.add.image(512, 384, 'background-minigame')
-        this.background.setDisplaySize(1024, 768)
+        this.background = this.add.image(512, 384, 'pb_background')
 
-        // Add Title
-        this.add.text(0, 150, this.config.title, {
+        // Add Game Title
+        this.add.text(50, 50, 'Save the city - \nBe the hero', {
+            fontFamily: 'MightySoul',
+            fontSize: '50px',
+            color: '#ABCFFB',
+        })
+
+        // Add MiniGame Title
+        this.gameTitle = this.add.text(0, 150, this.config.title, {
             align: 'center',
             fixedWidth: 1024,
             fontSize: '48px',
@@ -44,7 +53,7 @@ export class MinigameIntro extends Scene {
         })
 
         // Add Description
-        this.add.text(
+        this.gameDescription = this.add.text(
             100,
             +this.game.config.height / 2 - 150,
             this.config.tutorialText,
@@ -71,6 +80,7 @@ export class MinigameIntro extends Scene {
         const gameControl = EnergykidsGamecontrol.getInstance()
         const playerAmount = gameControl.getPlayers().length
         const division = +this.game.config.width / (playerAmount + 1)
+        this.players = []
 
         for (let i = 0; i < playerAmount; i++) {
             const position = new Point(
@@ -109,7 +119,7 @@ export class MinigameIntro extends Scene {
                 }
             )
 
-            const characterKey = `character${i+1}`
+            const characterKey = `character${i + 1}`
             this.add.image(
                 position.x,
                 position.y - 100,
@@ -140,16 +150,19 @@ export class MinigameIntro extends Scene {
                     this.time.delayedCall(500, () => {
                         this.add.text(
                             0,
-                            +this.game.config.height / 2,
+                            +this.game.config.height / 2 - 100,
                             'Get Ready!',
                             {
                                 align: 'center',
                                 fixedWidth: 1024,
-                                fontSize: 45,
-                                color: 'white',
+                                fontSize: 70,
+                                color: '#00F077',
                                 fontStyle: 'bold',
+                                fontFamily: 'MightySoul',
                             }
                         )
+                        this.gameTitle.setVisible(false)
+                        this.gameDescription.setVisible(false)
                         this.time.delayedCall(2000, () => {
                             this.cameras.main.fadeOut(1000, 0, 0, 0)
                             this.cameras.main.once(
@@ -178,7 +191,6 @@ export class MinigameIntro extends Scene {
             })
             .on('pointerdown', () => {
                 this.scene.start('Lobby')
-                this.players = []
             })
         this.add
             .text(950, 50, 'Exit', {
