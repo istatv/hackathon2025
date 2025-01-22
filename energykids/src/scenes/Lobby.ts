@@ -22,9 +22,16 @@ export class Lobby extends Scene {
     }
 
     renderButtons() {
-        this.add
-            .rectangle(150, 125, 200, 50, 0x0000ff)
+        // Start game
+        const startButton = this.add
+            .image(150, 125, 'button_start')
             .setInteractive()
+            .on('pointerover', () => {
+                startButton.setTexture('button_start_hover')
+            })
+            .on('pointerout', () => {
+                startButton.setTexture('button_start')
+            })
             .on('pointerdown', () => {
                 this.launchMiniGame(
                     Minigames[Phaser.Math.Between(0, Minigames.length - 1)]
@@ -34,19 +41,23 @@ export class Lobby extends Scene {
         this.add
             .text(150, 125, 'Start Game', {
                 fontSize: '24px',
-                color: '#ffffff',
+                color: '#000000',
             })
             .setOrigin(0.5)
 
-        this.add
-            .rectangle(950, 50, 100, 50, 0x0000ff)
+        const restartButton = this.add
+            .image(950, 50, 'button_exit')
             .setInteractive()
-            .on('pointerdown', () => {})
-
+            .on('pointerover', () => {
+                restartButton.setTexture('button_exit_hover')
+            })
+            .on('pointerout', () => {
+                restartButton.setTexture('button_exit')
+            })
         this.add
-            .text(950, 50, 'Exit', {
-                fontSize: '24px',
-                color: '#ffffff',
+            .text(950, 50, 'Restart', {
+                fontSize: '21px',
+                color: '#000000',
             })
             .setOrigin(0.5)
     }
