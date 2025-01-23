@@ -15,12 +15,12 @@ interface Player {
 export class MinigameIntro extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera
     background: Phaser.GameObjects.Image
-
+    
     // Retrieve data from the registry
     config: any
-
+    
     players: Player[] = []
-
+    
     gameTitle: Phaser.GameObjects.Text
     gameDescription: Phaser.GameObjects.Text
 
@@ -45,7 +45,7 @@ export class MinigameIntro extends Scene {
         })
 
         // Add MiniGame Title
-        this.gameTitle = this.add.text(0, 150, this.config.title, {
+        this.gameTitle = this.add.text(0, 180, this.config.title, {
             align: 'center',
             fixedWidth: 1024,
             fontSize: '48px',
@@ -126,6 +126,22 @@ export class MinigameIntro extends Scene {
                 position.y - 100,
                 this.config[characterKey]
             )
+
+            if (this.config.sceneToStart === 'CatchGame') {
+                if (i === 0) {
+                    this.add.image(
+                        position.x + 100,
+                        position.y - 75,
+                        'cg_basket_orange'
+                    ).setScale(0.6)
+                } else {
+                    this.add.image(
+                        position.x + 100,
+                        position.y - 75,
+                        'cg_basket_blue'
+                    ).setScale(0.6)
+                }
+            }
 
             const player: Player = {
                 button,
