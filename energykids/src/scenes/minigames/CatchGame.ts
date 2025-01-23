@@ -502,10 +502,21 @@ export class CatchGame extends Phaser.Scene {
                 ballReachedEnd || playerOneDidCollide || playerTwoDidCollide
 
             if (playerOneDidCollide) {
+                if (ball.effect > 0) {
+                    this.sound.play('pb_score')
+                } else {
+                    this.sound.play('pb_noscore')
+                }
                 this.playerOneScore += ball.effect
                 // this.gamecontrol.getPlayerAt(0).addScore(ball.effect);
             }
             if (playerTwoDidCollide) {
+                if (ball.effect > 0) {
+                    this.sound.play('pb_score')
+                } else {
+                    this.sound.play('pb_noscore')
+                }
+
                 this.playerTwoScore += ball.effect
                 // this.gamecontrol.getPlayerAt(1).addScore(ball.effect);
             }

@@ -48,4 +48,7 @@ export const loadCatchGameAssets = (load: LoaderPlugin) => {
             url: 'catchgame/basket_orange_middle.svg',
         },
     ])
+
+    load.audio({ key: 'pb_score', url: 'catchgame/score.wav' })
+    load.audio({ key: 'pb_noscore', url: 'catchgame/noscore.flac' })
 }
