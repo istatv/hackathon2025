@@ -10,6 +10,7 @@ export const loadLobbyAssets = (load: LoaderPlugin) => {
             key: 'city_background4',
             url: 'city/Background_bestcase_100.png',
         },
+        { key: 'background_startscreen', url: 'Background_Starscreen.png' },
     ])
     load.svg([
         { key: 'kyo1', url: 'kyo2-06.svg' },

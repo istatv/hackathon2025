@@ -1,4 +1,4 @@
-import { Scene, GameObjects } from 'phaser'
+import { GameObjects, Scene } from 'phaser'
 
 export class MainMenu extends Scene {
     background: Phaser.GameObjects.Image
@@ -12,7 +12,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.background = this.add.image(512, 384, 'city_background1')
+        this.background = this.add.image(512, 384, 'background_startscreen')
 
         //this.logo = this.add.image(512, 300, 'logo')
 
@@ -41,7 +41,7 @@ export class MainMenu extends Scene {
             )
             .setOrigin(0.5)
 
-            const startButton = this.add
+        const startButton = this.add
             .image(512, 600, 'button_start')
             .setInteractive()
             .on('pointerover', () => {
@@ -54,15 +54,14 @@ export class MainMenu extends Scene {
                 this.scene.start('Lobby')
             })
 
-            this.buttonText = this.add
-                .text(512, 595, 'Let´s go!', {
-                    align: 'center',
-                    fontSize: 40,
-                    color: '#0165E4',
-                    fontStyle: 'bold',
-                    fontFamily: 'MightySoul',
-                })
-                .setOrigin(0.5)
-        }
+        this.buttonText = this.add
+            .text(512, 595, 'Let´s go!', {
+                align: 'center',
+                fontSize: 40,
+                color: '#0165E4',
+                fontStyle: 'bold',
+                fontFamily: 'MightySoul',
+            })
+            .setOrigin(0.5)
     }
-    
+}
