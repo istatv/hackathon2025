@@ -58,7 +58,7 @@ export class CatchGame extends Phaser.Scene {
     create() {
         this.ballPool = []
         this.outroGroup = []
-        this.countdown = 10
+        this.countdown = 30
         this.playerOneScore = 0
         this.playerTwoScore = 0
         this.camera = this.cameras.main

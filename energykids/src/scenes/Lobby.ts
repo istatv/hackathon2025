@@ -19,6 +19,12 @@ export class Lobby extends Scene {
         this.renderPlayerScores()
         this.renderButtons()
         this.cameras.main.fadeIn(500, 255, 255, 255)
+        this.input.keyboard?.on('keydown-C', () => {
+            this.gameState.getPlayerAt(0).addScore(100)
+            this.renderCityAndScore()
+            this.renderPlayerScores()
+            this.renderButtons()
+        })
     }
 
     renderButtons() {
