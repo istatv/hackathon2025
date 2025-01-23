@@ -32,7 +32,7 @@ export class PushButtonGame extends Phaser.Scene {
 
     private static AMOUNT_TO_INCREASE = 10
     private static MAX_HEIGHT = 120
-    private static REDUCTION_SPEED = 0.02
+    private static REDUCTION_SPEED = 0.04
     private static GAME_DURATION = 30
     private static MAX_SCORE_PER_SECOND = 50
     private static NUM_COUNTDOWN = 3

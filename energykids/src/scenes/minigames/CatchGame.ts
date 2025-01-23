@@ -624,6 +624,7 @@ export class CatchGame extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         })
+        this.sound.play('pb_music', { loop: true })
     }
 
     initBindings() {
