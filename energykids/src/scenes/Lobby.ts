@@ -18,6 +18,7 @@ export class Lobby extends Scene {
         this.renderCityAndScore()
         this.renderPlayerScores()
         this.renderButtons()
+        this.cameras.main.fadeIn(500, 255, 255, 255)
     }
 
     renderButtons() {
@@ -56,8 +57,15 @@ export class Lobby extends Scene {
                 restartButton.setTexture('button_exit')
             })
             .on('pointerdown', () => {
-                this.gameState.getPlayerAt(0).addScore(50)
-                this.scene.restart()
+                this.cameras.main.fadeOut(1000, 255, 255, 255)
+                this.cameras.main.once(
+                    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                    (cam, effect) => {
+                        this.gameState.reset()
+                        this.scene.stop()
+                        this.scene.start('Lobby')
+                    }
+                )
             })
 
         this.add
@@ -114,12 +122,20 @@ export class Lobby extends Scene {
             color: '#ABCFFB',
         })
         this.sound.stopAll()
-        this.sound.play('lobby_main_' + number, { loop: true })
+        this.sound.play('caketown')
 
         this.add.image(scorePosition.x, scorePosition.y, 'life' + number)
-        this.add
+        const city = this.add
             .image(0, 0, 'city' + number)
             .setOrigin(cityOrigin.x, cityOrigin.y)
+        this.tweens.add({
+            targets: city,
+            y: city.y - 20,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            duration: 3000,
+        })
 
         // Total score
         this.add
@@ -182,7 +198,7 @@ export class Lobby extends Scene {
                 const userName = inputElement.value
                 if (userName.trim().length > 0) {
                     player.name = userName
-                    this.scene.restart()
+                    this.renderPlayerScores()
                 }
 
                 // Cleanup popup elements

@@ -4,6 +4,8 @@ import TimeStep = Phaser.Core.TimeStep
 import Image = Phaser.GameObjects.Image
 import Key = Phaser.Input.Keyboard.Key
 import Rectangle = Phaser.GameObjects.Rectangle
+import Text = Phaser.GameObjects.Text
+import Between = Phaser.Math.Between
 
 interface PlayerState {
     id: number
@@ -12,6 +14,7 @@ interface PlayerState {
     barHeight: number
     barImage?: Rectangle
     score: number
+    scoreText?: Text
     key?: Key
     timer: TimeStep
     leftLegStreched: boolean
@@ -27,9 +30,12 @@ export class PushButtonGame extends Phaser.Scene {
     private playerTwo: PlayerState
     private bulb_overlay?: Image
 
-    private static AMOUNT_TO_INCREASE = 80
-    private static MAX_HEIGHT = 200
-    private static REDUCTION_SPEED = 0.35
+    private static AMOUNT_TO_INCREASE = 10
+    private static MAX_HEIGHT = 120
+    private static REDUCTION_SPEED = 0.02
+    private static GAME_DURATION = 30
+    private static MAX_SCORE_PER_SECOND = 50
+    private static NUM_COUNTDOWN = 3
 
     private gameStarted = false
     private gameFinished = false
@@ -47,11 +53,11 @@ export class PushButtonGame extends Phaser.Scene {
             id: 1,
             leftLegStreched: false,
             player: this.gameState.getPlayerAt(0),
-            key: this.input.keyboard
-                ?.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL, true, false)
-                .on('down', () => {
-                    this.buttonPush(this.playerOne)
-                }),
+            key: this.input.keyboard?.addKey(
+                Phaser.Input.Keyboard.KeyCodes.CTRL,
+                true,
+                false
+            ),
             score: 0,
             barHeight: 0,
             playerImage: undefined,
@@ -63,11 +69,11 @@ export class PushButtonGame extends Phaser.Scene {
             id: 2,
             leftLegStreched: false,
             player: this.gameState.getPlayerAt(1),
-            key: this.input.keyboard
-                ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true, false)
-                .on('down', () => {
-                    this.buttonPush(this.playerTwo)
-                }),
+            key: this.input.keyboard?.addKey(
+                Phaser.Input.Keyboard.KeyCodes.SPACE,
+                true,
+                false
+            ),
             score: 0,
             barHeight: 0,
             playerImage: undefined,
@@ -82,7 +88,9 @@ export class PushButtonGame extends Phaser.Scene {
     }
 
     renderCountdown() {
-        this.countdown = 1
+        this.sound.play('pb_countdown')
+
+        this.countdown = PushButtonGame.NUM_COUNTDOWN
         this.countdownTimer = this.time.addEvent({
             delay: 1000,
             callback: this.updateCountdown,
@@ -125,9 +133,13 @@ export class PushButtonGame extends Phaser.Scene {
     }
 
     reduceBar(delta: number, player: PlayerState) {
-        player.barHeight -= delta * PushButtonGame.REDUCTION_SPEED
-        if (player.barHeight <= 0) {
-            player.barHeight = 0
+        if (!this.gameFinished) {
+            const reduction = delta * PushButtonGame.REDUCTION_SPEED
+
+            player.barHeight -= reduction
+            if (player.barHeight <= 0) {
+                player.barHeight = 0
+            }
         }
     }
 
@@ -137,9 +149,10 @@ export class PushButtonGame extends Phaser.Scene {
         }
 
         if (player.barHeight >= PushButtonGame.MAX_HEIGHT) {
-            this.gameWon(player.player)
-            return
+            player.barHeight = PushButtonGame.MAX_HEIGHT
         }
+
+        this.sound.play('pb_wheel' + Phaser.Math.Between(1, 3))
 
         player.barHeight += PushButtonGame.AMOUNT_TO_INCREASE
         player.leftLegStreched = !player.leftLegStreched
@@ -152,30 +165,129 @@ export class PushButtonGame extends Phaser.Scene {
             .setAngle(player.leftLegStreched ? -3 : 3)
     }
 
-    gameWon(player: Player) {
-        this.add.text(
-            +this.game.config.width / 2 - 200,
-            +this.game.config.height / 2 - 100,
-            'Congratulations ' +
-                player.name +
-                ', you have won! \n\n Press [ ENTER ] to return to the city.',
-            {
-                align: 'center',
-                fontSize: '40px',
-                wordWrap: { width: 500 },
-            }
-        )
+    endGame(player: PlayerState) {
+        this.gameFinished = true
+        this.sound.stopAll()
         this.playerOne.timer.stop()
         this.playerTwo.timer.stop()
-        this.gameFinished = true
-        player.addScore(50)
-        this.backToLobby()
-    }
 
-    backToLobby() {
+        this.renderBackground()
+        this.playerOne.playerImage?.setToTop()
+        this.playerTwo.playerImage?.setToTop()
+
+        const scoreLabels = ['pb_text_awesome', 'pb_text_cool', 'pb_text_great']
+
+        const starOne = this.add.image(360, 300, 'pb_star').setAlpha(0)
+        const scoreOne = this.add
+            .text(360, 300, this.playerOne.score + '', {
+                fontFamily: 'MightySoul',
+                fontSize: '48px',
+                color: 'black',
+            })
+            .setOrigin()
+            .setAlpha(0)
+        const scoreOneLabel = this.add
+            .image(370, 440, scoreLabels[Between(0, scoreLabels.length)])
+            .setScale(0.8, 0.8)
+            .setAlpha(0)
+
+        const starTwo = this.add.image(660, 300, 'pb_star').setAlpha(0)
+        const scoreTwo = this.add
+            .text(660, 300, this.playerTwo.score + '', {
+                fontFamily: 'MightySoul',
+                fontSize: '48px',
+                color: 'black',
+            })
+            .setOrigin()
+            .setAlpha(0)
+        const scoreTwoLabel = this.add
+            .image(650, 440, scoreLabels[Between(0, scoreLabels.length - 1)])
+            .setScale(0.8, 0.8)
+            .setAlpha(0)
+
+        // Floating animation
+        this.tweens.add({
+            targets: [starOne, scoreOne],
+            y: starOne.y - 20,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            duration: 3000,
+        })
+        // Fade in
+        this.tweens.add({
+            targets: [starOne, scoreOne],
+            alpha: 1,
+            ease: 'Cubic',
+            duration: 1200,
+            delay: 600,
+        })
+
+        // Floating animation
+        this.tweens.add({
+            targets: [starTwo, scoreTwo],
+            y: starOne.y - 20,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            delay: 1500,
+            duration: 3000,
+        })
+        // Fade in
+        this.tweens.add({
+            targets: [starTwo, scoreTwo],
+            alpha: 1,
+            ease: 'Cubic',
+            duration: 1200,
+            delay: 1500,
+        })
+
+        // Move players
+        const duration = 800
+        this.tweens.add({
+            targets: this.playerOne.playerImage,
+            x: '+=50',
+            y: '-=60',
+            scaleX: 1.5,
+            scaleY: 1.5,
+            ease: 'Cubic',
+            duration,
+        })
+        this.tweens.add({
+            targets: this.playerTwo.playerImage,
+            x: '-=50',
+            y: '-=60',
+            scaleX: 1.5,
+            scaleY: 1.5,
+            ease: 'Cubic',
+            duration,
+        })
+
+        // Show score label
+        this.tweens.add({
+            targets: [scoreOneLabel, scoreTwoLabel],
+            duration: 2000,
+            alpha: 1,
+            delay: 2000,
+        })
+
+        this.sound.play('pb_finish')
+        this.time.delayedCall(200, () => {
+            this.sound.play('pb_wow')
+        })
+
+        this.playerOne.player.addScore(this.playerOne.score)
+        this.playerTwo.player.addScore(this.playerTwo.score)
+
         this.input.keyboard?.on('keydown-ENTER', () => {
-            this.scene.stop(PushButtonGame.IDENTIFIER)
-            this.scene.start('Lobby')
+            this.cameras.main.fadeOut(1000, 255, 255, 255)
+            this.cameras.main.once(
+                Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                (cam, effect) => {
+                    this.scene.stop(PushButtonGame.IDENTIFIER)
+                    this.scene.start('Lobby')
+                }
+            )
         })
     }
 
@@ -185,23 +297,27 @@ export class PushButtonGame extends Phaser.Scene {
 
         if (this.countdown <= 0) {
             this.countdownText.setText('Go!')
+
             if (this.countdown <= -1) {
                 this.countdownTimer.remove()
                 this.countdownText.destroy()
-                this.gameStarted = true
-                this.renderPlayers()
-                this.renderBulb()
-                this.renderBars()
+                this.startGame()
+            } else {
+                this.sound.play('pb_start')
             }
+        } else {
+            this.sound.play('pb_countdown')
         }
     }
 
     renderBulb() {
-        const width = +this.game.config.width / 2
-        const height = +this.game.config.height / 2
-        this.add.image(width, height, 'pb_bulb_off').setOrigin(0.5, 0.65)
+        const x = +this.game.config.width / 2
+        const y = +this.game.config.height / 2
+
+        this.add.line(0, 50, x, 10, x, y - 50, 0xffffff, 1)
+        this.add.image(x, y, 'pb_bulb_off').setOrigin(0.5, 0.65)
         this.bulb_overlay = this.add
-            .image(width, height, 'pb_bulb_on')
+            .image(x, y, 'pb_bulb_on')
             .setOrigin(0.5, 0.65)
             .setAlpha(0)
     }
@@ -210,20 +326,120 @@ export class PushButtonGame extends Phaser.Scene {
         this.add.image(200, 645, 'pb_bar')
         this.add.image(820, 645, 'pb_bar')
 
-        this.playerOne.barImage = this.add.rectangle(200, 645, 10, 0, 0xff7448)
-        this.playerTwo.barImage = this.add.rectangle(620, 645, 10, 0, 0xff7335)
+        this.playerOne.barImage = this.add.rectangle(200, 710, 10, 0, 0x07f077)
+        this.playerTwo.barImage = this.add.rectangle(820, 710, 10, 0, 0x07f077)
+    }
+
+    renderScores() {
+        this.playerOne.scoreText = this.add.text(171, 725, '0', {
+            fontFamily: 'MightySoul',
+            fontSize: '24px',
+            color: '#ABCFFB',
+            align: 'center',
+            fixedWidth: 60,
+        })
+
+        this.playerTwo.scoreText = this.add.text(791, 725, '0', {
+            fontFamily: 'MightySoul',
+            fontSize: '24px',
+            color: '#ABCFFB',
+            align: 'center',
+            fixedWidth: 60,
+        })
+    }
+
+    startGame() {
+        this.gameStarted = true
+        this.renderPlayers()
+        this.renderBulb()
+        this.renderBars()
+        this.renderScores()
+        this.sound.play('pb_music', { loop: true })
+
+        this.add
+            .text(
+                +this.game.config.width / 2,
+                +this.game.config.height - 75,
+                'Seconds left',
+                {
+                    fixedWidth: 200,
+                    fontSize: '28px',
+                    fontFamily: 'MightySoul',
+                    align: 'center',
+                }
+            )
+            .setOrigin()
+
+        let gameDuration = PushButtonGame.GAME_DURATION
+        const gameTime = this.add
+            .text(
+                +this.game.config.width / 2,
+                +this.game.config.height - 120,
+                gameDuration + '',
+                {
+                    fixedWidth: 200,
+                    fontSize: '48px',
+                    fontFamily: 'MightySoul',
+                    align: 'center',
+                }
+            )
+            .setOrigin()
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                if (gameDuration === 0) {
+                    this.endGame(
+                        this.playerOne.score > this.playerTwo.score
+                            ? this.playerOne
+                            : this.playerTwo
+                    )
+                } else {
+                    this.addScore(this.playerOne)
+                    this.addScore(this.playerTwo)
+                    gameTime.setText((--gameDuration).toString())
+                }
+            },
+            repeat: PushButtonGame.GAME_DURATION,
+        })
+    }
+
+    addScore(player: PlayerState) {
+        // Calculate amount of score a player gets for the current bar height
+        const multiplicative =
+            PushButtonGame.MAX_SCORE_PER_SECOND / PushButtonGame.MAX_HEIGHT
+        const playerScore = player.barHeight * multiplicative
+        player.score += Math.floor(playerScore * multiplicative)
+        player.scoreText?.setText(player.score + '')
     }
 
     update(time: number, delta: number) {
         super.update(time, delta)
 
         if (this.gameStarted && !this.gameFinished) {
+            // Check for keys
+            if (this.playerOne.key?.isDown) {
+                this.playerOne.key.isDown = false
+                this.buttonPush(this.playerOne)
+            }
+            if (this.playerTwo.key?.isDown) {
+                this.playerTwo.key.isDown = false
+                this.buttonPush(this.playerTwo)
+            }
+
             // Update bar sizes
             if (this.playerOne.barImage) {
-                this.playerOne.barImage.height = this.playerOne.barHeight
+                const bar = this.playerOne.barImage
+                const heightDiff = this.playerOne.barHeight - bar.height
+
+                bar.setPosition(bar.x, bar.y - heightDiff)
+                bar.height = this.playerOne.barHeight
             }
             if (this.playerTwo.barImage) {
-                this.playerTwo.barImage.height = this.playerTwo.barHeight
+                const bar = this.playerTwo.barImage
+                const heightDiff = this.playerTwo.barHeight - bar.height
+
+                bar.setPosition(bar.x, bar.y - heightDiff)
+                bar.height = this.playerTwo.barHeight
             }
 
             // Reduce size of player if they are not paddling
@@ -235,14 +451,16 @@ export class PushButtonGame extends Phaser.Scene {
                 1 +
                 (this.playerTwo?.barImage?.height ?? 0) /
                     PushButtonGame.MAX_HEIGHT
+
             this.playerOne.playerImage?.setScale(playerOneScale)
             this.playerTwo.playerImage?.setScale(playerTwoScale)
+
             const overAllProgress =
-                0.02 -
-                (this.playerOne.barHeight > this.playerTwo.barHeight
+                (this.playerOne.barHeight >= this.playerTwo.barHeight
                     ? this.playerOne.barHeight
                     : this.playerTwo.barHeight) /
-                    PushButtonGame.MAX_HEIGHT
+                    PushButtonGame.MAX_HEIGHT -
+                0.02
 
             this.bulb_overlay?.setAlpha(overAllProgress)
         }

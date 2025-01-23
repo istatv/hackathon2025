@@ -30,6 +30,7 @@ export class MinigameIntro extends Scene {
 
     setupScene() {
         this.sound.stopAll()
+        this.sound.play('countdown')
 
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x00ffea)

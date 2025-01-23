@@ -36,4 +36,15 @@ export const loadPushButtonAssets = (load: LoaderPlugin) => {
         { key: 'pb_bar', url: 'pushbutton/loadingbar.svg' },
         { key: 'pb_star', url: 'pushbutton/Star.svg' },
     ])
+
+    load.audio([
+        { key: 'pb_music', url: 'pushbutton/riverside.wav' },
+        { key: 'pb_countdown', url: 'pushbutton/countdown.wav' },
+        { key: 'pb_wheel1', url: 'pushbutton/wheel1.wav' },
+        { key: 'pb_wheel2', url: 'pushbutton/wheel2.wav' },
+        { key: 'pb_wheel3', url: 'pushbutton/wheel3.wav' },
+        { key: 'pb_start', url: 'pushbutton/start.wav' },
+        { key: 'pb_finish', url: 'pushbutton/completed.ogg' },
+        { key: 'pb_wow', url: 'pushbutton/wow.wav' },
+    ])
 }

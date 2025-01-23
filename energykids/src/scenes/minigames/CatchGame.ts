@@ -1,8 +1,8 @@
 import { Player } from '../../shared/entities/Player.ts'
 import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol'
 
-const MAIN_FONT = "MightySoul";
-const TOTAL_BALLS = 5;
+const MAIN_FONT = 'MightySoul'
+const TOTAL_BALLS = 5
 export class CatchGame extends Phaser.Scene {
     public static readonly IDENTIFIER: string = 'CatchGame'
 
@@ -56,13 +56,13 @@ export class CatchGame extends Phaser.Scene {
     create() {
         this.ballPool = []
         this.outroGroup = []
-        this.countdown = 30;
-        this.playerOneScore = 0;
-        this.playerTwoScore = 0;
+        this.countdown = 30
+        this.playerOneScore = 0
+        this.playerTwoScore = 0
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0xaaaaaa)
 
-        this.add.image(0, 0, 'pb_background').setScale(0.5)
+        this.add.image(512, 384, 'pb_background')
 
         // if (this.countdown <= -1) {
         //     this.countdownTimer.remove()
@@ -70,18 +70,18 @@ export class CatchGame extends Phaser.Scene {
         //     this.gameIsOver = false
         // }
 
-        this.initBallPool();
-        this.addPlayers();
-        this.addSlogan();
-        this.addTimerText();
-        this.addScoreText();
-        this.addBalls();
-        this.addIntroOverlay();
-        this.initBindings();
+        this.initBallPool()
+        this.addPlayers()
+        this.addSlogan()
+        this.addTimerText()
+        this.addScoreText()
+        this.addBalls()
+        this.addIntroOverlay()
+        this.initBindings()
     }
 
     initBallPool() {
-        const totalBalls = TOTAL_BALLS;
+        const totalBalls = TOTAL_BALLS
         for (let idx = 0; idx < totalBalls; idx++) {
             this.ballPool.push(this.createBall(idx))
         }
@@ -104,38 +104,39 @@ export class CatchGame extends Phaser.Scene {
             r: 15,
         }
 
-        if(withSprite) {
-            b = this.attachSpriteToBall(b);
+        if (withSprite) {
+            b = this.attachSpriteToBall(b)
         }
 
-        return b;
+        return b
     }
 
     attachSpriteToBall(ball) {
         let sprite = [
-            { color: 0xffff00, asset: 'cg_drop_water'},
-            { color: 0x00ff00, asset: 'cg_drop_sun'},
-            { color: 0xff0000, asset: 'cg_drop_stone'},
-        ].filter((s) => s.color == ball.color).pop();
+            { color: 0xffff00, asset: 'cg_drop_water' },
+            { color: 0x00ff00, asset: 'cg_drop_sun' },
+            { color: 0xff0000, asset: 'cg_drop_stone' },
+        ]
+            .filter((s) => s.color == ball.color)
+            .pop()
 
-        ball.sprite = this.add.image(ball.currX, ball.currX, sprite.asset);
+        ball.sprite = this.add.image(ball.currX, ball.currX, sprite.asset)
 
-        return ball;
+        return ball
     }
 
     updateBall(ball) {
-        const tmp = this.createBall(ball.id);
+        const tmp = this.createBall(ball.id)
 
-        if(ball.sprite) {
+        if (ball.sprite) {
             // console.log('destro');
-            ball.sprite.destroy();
-            ball.sprite = undefined;
+            ball.sprite.destroy()
+            ball.sprite = undefined
         }
 
         Object.keys(tmp).forEach((k) => {
             ball[k] = tmp[k]
         })
-
 
         return ball
     }
@@ -155,7 +156,7 @@ export class CatchGame extends Phaser.Scene {
         let dy = height * 0.5
 
         // for (const ball of this.ballPool) {
-            // ball.sprite = this.add.circle(ball.currX, dy, ball.r, ball.color)
+        // ball.sprite = this.add.circle(ball.currX, dy, ball.r, ball.color)
         // }
     }
 
@@ -178,7 +179,11 @@ export class CatchGame extends Phaser.Scene {
                 Phaser.Input.Keyboard.KeyCodes.D
             ),
         }
-        this.paddleOne.__proto__ = this.add.image(wha - 200, oy, 'cg_basket_orange');
+        this.paddleOne.__proto__ = this.add.image(
+            wha - 200,
+            oy,
+            'cg_basket_orange'
+        )
 
         oy = height - size * 0.75 + Math.random() * 5 - 5
         this.paddleTwo = {
@@ -193,7 +198,11 @@ export class CatchGame extends Phaser.Scene {
                 Phaser.Input.Keyboard.KeyCodes.L
             ),
         }
-        this.paddleTwo.__proto__ = this.add.image(wha - 200, oy, 'cg_basket_blue');
+        this.paddleTwo.__proto__ = this.add.image(
+            wha - 200,
+            oy,
+            'cg_basket_blue'
+        )
     }
 
     addIntroOverlay() {
@@ -372,17 +381,16 @@ export class CatchGame extends Phaser.Scene {
         this.playerOneText = this.add.text(
             20,
             20,
-            "Save the City - \nBe a Hero",
+            'Save the City - \nBe a Hero',
             playerTextStyle
         )
 
         this.playerOneText = this.add.text(
             20,
             100,
-            "Catching Energy",
+            'Catching Energy',
             playerTextStyle
         )
-
     }
 
     addTimerText() {
@@ -405,17 +413,14 @@ export class CatchGame extends Phaser.Scene {
                 fontSize: '40px',
                 // wordWrap: { width: 600 },
                 fontFamily: MAIN_FONT,
-            });
-            this.add.text(
-                cw * 0.5 - 40,
-                60,
-                "seconds left",
-                {
-                    align: 'center',
-                    fontSize: '20px',
-                    // wordWrap: { width: 600 },
-                    fontFamily: MAIN_FONT,
-                });
+            }
+        )
+        this.add.text(cw * 0.5 - 40, 60, 'seconds left', {
+            align: 'center',
+            fontSize: '20px',
+            // wordWrap: { width: 600 },
+            fontFamily: MAIN_FONT,
+        })
     }
 
     addScoreText() {
@@ -443,18 +448,18 @@ export class CatchGame extends Phaser.Scene {
             ch - 45,
             this.getFormatedScoreText(this.playerOne, this.playerOneScore),
             playerTextStyle
-        );
+        )
 
         this.playerTwoText = this.add.text(
             this.paddleTwo.currX,
             ch - 45,
             this.getFormatedScoreText(this.playerTwo, this.playerTwoScore),
             playerTextStyle
-        );
+        )
     }
 
     getCurrentCountdownFormated() {
-        return this.countdown;
+        return this.countdown
     }
 
     getFormatedScoreText(player, score) {
