@@ -63,5 +63,6 @@ export const loadLobbyAssets = (load: LoaderPlugin) => {
         { key: 'lobby_main_6', url: 'city/city6.ogg' },
         { key: 'caketown', url: 'city/caketown.mp3' },
         { key: 'countdown', url: 'countdown-speech.ogg' },
+        { key: 'confirm', url: 'confirm.wav' },
     ])
 }

@@ -38,5 +38,14 @@ export const loadCatchGameAssets = (load: LoaderPlugin) => {
             url: 'catchgame/Kyo_2.svg',
             svgConfig: { scale: 0.4 },
         },
+
+        {
+            key: 'pb_basket_1',
+            url: 'catchgame/basket_blue_middle.svg',
+        },
+        {
+            key: 'pb_basket_2',
+            url: 'catchgame/basket_orange_middle.svg',
+        },
     ])
 }

@@ -1,5 +1,7 @@
 import { Player } from '../../shared/entities/Player.ts'
 import { EnergykidsGamecontrol } from '../../shared/EnergykidsGamecontrol'
+import { PushButtonGame } from './PushButtonGame.ts'
+import Between = Phaser.Math.Between
 
 const MAIN_FONT = 'MightySoul'
 const TOTAL_BALLS = 5
@@ -56,7 +58,7 @@ export class CatchGame extends Phaser.Scene {
     create() {
         this.ballPool = []
         this.outroGroup = []
-        this.countdown = 30
+        this.countdown = 10
         this.playerOneScore = 0
         this.playerTwoScore = 0
         this.camera = this.cameras.main
@@ -651,7 +653,134 @@ export class CatchGame extends Phaser.Scene {
         if (this.countdown <= 0) {
             this.gamestate = CatchGame.State.OUTRO
             this.countdownTimer.destroy()
-            this.addOutroOverlay()
+            //this.addOutroOverlay()
+            this.endGame()
         }
+    }
+
+    endGame() {
+        this.sound.stopAll()
+
+        this.add.image(512, 384, 'pb_background')
+
+        const scoreLabels = ['pb_text_awesome', 'pb_text_cool', 'pb_text_great']
+
+        const basketOne = this.add.image(320, 640, 'pb_basket_2').setAlpha(0)
+        const basketTwo = this.add.image(710, 640, 'pb_basket_1').setAlpha(0)
+
+        const starOne = this.add.image(360, 300, 'pb_star').setAlpha(0)
+        const scoreOne = this.add
+            .text(360, 300, this.playerOneScore + '', {
+                fontFamily: 'MightySoul',
+                fontSize: '48px',
+                color: 'black',
+            })
+            .setOrigin()
+            .setAlpha(0)
+        const scoreOneLabel = this.add
+            .image(370, 440, scoreLabels[Between(0, scoreLabels.length - 1)])
+            .setScale(0.8, 0.8)
+            .setAlpha(0)
+
+        const starTwo = this.add.image(660, 300, 'pb_star').setAlpha(0)
+        const scoreTwo = this.add
+            .text(660, 300, this.playerTwoScore + '', {
+                fontFamily: 'MightySoul',
+                fontSize: '48px',
+                color: 'black',
+            })
+            .setOrigin()
+            .setAlpha(0)
+        const scoreTwoLabel = this.add
+            .image(650, 440, scoreLabels[Between(0, scoreLabels.length - 1)])
+            .setScale(0.8, 0.8)
+            .setAlpha(0)
+
+        // Floating animation
+        this.tweens.add({
+            targets: [starOne, scoreOne],
+            y: starOne.y - 20,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            duration: 3000,
+        })
+        // Fade in
+        this.tweens.add({
+            targets: [starOne, scoreOne],
+            alpha: 1,
+            ease: 'Cubic',
+            duration: 1200,
+            delay: 600,
+        })
+
+        // Floating animation
+        this.tweens.add({
+            targets: [starTwo, scoreTwo],
+            y: starOne.y - 20,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            delay: 1500,
+            duration: 3000,
+        })
+        // Fade in
+        this.tweens.add({
+            targets: [starTwo, scoreTwo],
+            alpha: 1,
+            ease: 'Cubic',
+            duration: 1200,
+            delay: 1500,
+        })
+
+        // Move players
+        const duration = 800
+        this.tweens.add({
+            targets: basketOne,
+            x: '+=50',
+            y: '-=60',
+            scaleX: 1.5,
+            scaleY: 1.5,
+            ease: 'Cubic',
+            duration,
+            alpha: 1,
+        })
+        this.tweens.add({
+            targets: basketTwo,
+            x: '-=50',
+            y: '-=60',
+            scaleX: 1.5,
+            scaleY: 1.5,
+            ease: 'Cubic',
+            duration,
+            alpha: 1,
+        })
+
+        // Show score label
+        this.tweens.add({
+            targets: [scoreOneLabel, scoreTwoLabel],
+            duration: 2000,
+            alpha: 1,
+            delay: 2000,
+        })
+
+        this.sound.play('pb_finish')
+        this.time.delayedCall(200, () => {
+            this.sound.play('pb_wow')
+        })
+
+        this.playerOne.addScore(this.playerOneScore)
+        this.playerTwo.addScore(this.playerTwoScore)
+
+        this.input.keyboard?.on('keydown-ENTER', () => {
+            this.cameras.main.fadeOut(1000, 255, 255, 255)
+            this.cameras.main.once(
+                Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                (cam, effect) => {
+                    this.scene.stop(PushButtonGame.IDENTIFIER)
+                    this.scene.start('Lobby')
+                }
+            )
+        })
     }
 }

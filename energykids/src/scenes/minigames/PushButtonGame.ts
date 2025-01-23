@@ -165,7 +165,7 @@ export class PushButtonGame extends Phaser.Scene {
             .setAngle(player.leftLegStreched ? -3 : 3)
     }
 
-    endGame(player: PlayerState) {
+    endGame() {
         this.gameFinished = true
         this.sound.stopAll()
         this.playerOne.timer.stop()

@@ -15,12 +15,12 @@ interface Player {
 export class MinigameIntro extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera
     background: Phaser.GameObjects.Image
-    
+
     // Retrieve data from the registry
     config: any
-    
+
     players: Player[] = []
-    
+
     gameTitle: Phaser.GameObjects.Text
     gameDescription: Phaser.GameObjects.Text
 
@@ -129,17 +129,21 @@ export class MinigameIntro extends Scene {
 
             if (this.config.sceneToStart === 'CatchGame') {
                 if (i === 0) {
-                    this.add.image(
-                        position.x + 100,
-                        position.y - 75,
-                        'cg_basket_orange'
-                    ).setScale(0.6)
+                    this.add
+                        .image(
+                            position.x + 100,
+                            position.y - 75,
+                            'cg_basket_orange'
+                        )
+                        .setScale(0.6)
                 } else {
-                    this.add.image(
-                        position.x + 100,
-                        position.y - 75,
-                        'cg_basket_blue'
-                    ).setScale(0.6)
+                    this.add
+                        .image(
+                            position.x + 100,
+                            position.y - 75,
+                            'cg_basket_blue'
+                        )
+                        .setScale(0.6)
                 }
             }
 
@@ -161,6 +165,7 @@ export class MinigameIntro extends Scene {
         const playerAmount = gameControl.getPlayers().length
         for (let i = 0; i < playerAmount; i++) {
             this.input.keyboard?.on('keydown-' + this.players[i].button, () => {
+                this.sound.play('confirm')
                 this.players[i].subtitle.setText('Ready!')
                 this.players[i].ready = true
                 if (this.players.reduce((p, c) => c.ready && p, true)) {
