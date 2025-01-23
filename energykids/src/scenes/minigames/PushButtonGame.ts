@@ -187,7 +187,7 @@ export class PushButtonGame extends Phaser.Scene {
             .setOrigin()
             .setAlpha(0)
         const scoreOneLabel = this.add
-            .image(370, 440, scoreLabels[Between(0, scoreLabels.length)])
+            .image(370, 440, scoreLabels[Between(0, scoreLabels.length - 1)])
             .setScale(0.8, 0.8)
             .setAlpha(0)
 
